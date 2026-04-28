@@ -3,67 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rota Compartilhada - Home</title>
+    <title>Rota Sul - Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        :root {
-            --sidebar-width: 280px;
-            --primary-color: #0d6efd;
-            --dark-bg: #212529;
-        }
+        :root { --sidebar-width: 280px; --primary: #0d6efd; --dark: #212529; }
+        body { background-color: #f4f7f6; min-height: 100vh; margin: 0; display: flex; }
 
-        body { background-color: #f8f9fa; min-height: 100vh; overflow-x: hidden; }
-
-        /* Estilo da Sidebar */
         .sidebar {
-            width: var(--sidebar-width);
-            height: 100vh;
-            position: fixed;
-            background-color: var(--dark-bg);
-            color: white;
-            transition: all 0.3s;
-            z-index: 1000;
+            width: var(--sidebar-width); height: 100vh; position: fixed;
+            background-color: var(--dark); color: white; z-index: 1000;
         }
-
-        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid #444; }
-        .sidebar-header h4 { color: var(--primary-color); font-weight: bold; margin: 0; }
-
+        .sidebar-header { padding: 25px; text-align: center; border-bottom: 1px solid #444; }
+        .sidebar-header h4 { color: var(--primary); font-weight: bold; margin: 0; }
+        
         .nav-link {
-            color: #adb5bd;
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.2s;
+            color: #adb5bd; padding: 15px 25px; display: flex;
+            align-items: center; gap: 10px; transition: 0.2s; cursor: pointer;
+            text-decoration: none;
         }
+        .nav-link:hover, .nav-link.active { background-color: #343a40; color: white; }
 
-        .nav-link:hover, .nav-link.active {
-            background-color: #343a40;
-            color: white;
-        }
-
-        .nav-link i { font-size: 20px; }
-
-        /* Conteúdo Principal */
         .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 40px;
+            margin-left: var(--sidebar-width); padding: 60px;
             width: calc(100% - var(--sidebar-width));
+            display: flex; justify-content: center; align-items: flex-start;
         }
 
-        .auth-card {
-            max-width: 450px;
-            margin: auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        .card-custom { 
+            border: none; border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            background: white; width: 100%; max-width: 500px; 
         }
+        
+        .section-home { display: none; }
+        .section-home.active { display: block; }
 
-        /* Esconder/Mostrar seções */
-        .section-content { display: none; }
-        .section-content.active { display: block; }
+        .carona-item { border-left: 4px solid var(--primary); background: #f8f9fa; }
     </style>
 </head>
 <body>
@@ -71,144 +47,159 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <h4>Rota Sul</h4>
-            <small class="text-muted">Sul de Minas Gerais</small>
         </div>
         <nav class="nav flex-column mt-3">
-            <a class="nav-link active" href="#" onclick="showSection('home')">
-                <i class="material-icons">home</i> Home
+            <a class="nav-link active" id="btn-login" onclick="switchTab('login')">
+                <i class="material-icons">login</i> Entrar
             </a>
-            <a class="nav-link" href="#" onclick="showSection('login')">
-                <i class="material-icons">login</i> Fazer Login
+            <a class="nav-link" id="btn-cadastro" onclick="switchTab('cadastro')">
+                <i class="material-icons">person_add</i> Cadastrar-se
             </a>
-            <a class="nav-link" href="#" onclick="showSection('cadastro')">
-                <i class="material-icons">person_add</i> Criar Conta
-            </a>
-            <hr class="mx-3 text-secondary">
-            <a class="nav-link text-info" href="https://github.com" target="_blank">
-                <i class="material-icons">info</i> Sobre o Projeto
+            <a class="nav-link" id="btn-explorar" onclick="switchTab('explorar')">
+                <i class="material-icons">search</i> Explorar Caronas
             </a>
         </nav>
     </div>
 
     <div class="main-content">
         
-        <div id="section-home" class="section-content active">
-            <div class="jumbotron">
-                <h1 class="display-4">Bem-vindo ao Rota Compartilhada!</h1>
-                <p class="lead">A plataforma ideal para caronas universitárias e profissionais no sul de Minas.</p>
-                <hr class="my-4">
-                <p>Economize combustível, ajude o meio ambiente e conheça novas pessoas de Muzambinho, Guaxupé e região.</p>
-                <button class="btn btn-primary btn-lg" onclick="showSection('cadastro')">Começar agora</button>
-            </div>
+        <div id="section-login" class="section-home active card-custom p-5">
+            <h3 class="text-center mb-4">Login</h3>
+            <form id="formLogin">
+                <div class="mb-3">
+                    <label class="form-label">E-mail</label>
+                    <input type="email" id="email" class="form-control" required placeholder="seu@email.com">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Senha</label>
+                    <input type="password" id="senha" class="form-control" required placeholder="******">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2">Entrar</button>
+            </form>
         </div>
 
-        <div id="section-login" class="section-content">
-            <div class="auth-card">
-                <h3 class="mb-4">Login</h3>
-                <form id="formLogin">
-                    <div class="mb-3">
-                        <label class="form-label">E-mail</label>
-                        <input type="email" id="loginEmail" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Senha</label>
-                        <input type="password" id="loginSenha" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
-                </form>
-            </div>
+        <div id="section-cadastro" class="section-home card-custom p-5">
+            <h3 class="text-center mb-4">Criar Conta</h3>
+            <form id="formCadastro">
+                <div class="mb-3">
+                    <label class="form-label">Nome Completo</label>
+                    <input type="text" id="cad-nome" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">E-mail</label>
+                    <input type="email" id="cad-email" class="form-control" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Senha</label>
+                    <input type="password" id="cad-senha" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100 py-2">Finalizar Cadastro</button>
+            </form>
         </div>
 
-        <div id="section-cadastro" class="section-content">
-            <div class="auth-card">
-                <h3 class="mb-4">Criar Conta</h3>
-                <form id="formCadastro">
-                    <div class="mb-3">
-                        <label class="form-label">Nome Completo</label>
-                        <input type="text" id="nome" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">E-mail</label>
-                        <input type="email" id="email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Senha</label>
-                        <input type="password" id="senha" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100">Cadastrar</button>
-                </form>
+        <div id="section-explorar" class="section-home card-custom p-5" style="max-width: 700px;">
+            <h3 class="mb-4">Caronas Disponíveis</h3>
+            <div class="input-group mb-4">
+                <input type="text" id="busca-publica" class="form-control" placeholder="Cidade de destino...">
+                <button class="btn btn-primary" onclick="pesquisarPublico()">Buscar</button>
             </div>
+            <div id="lista-publica"></div>
         </div>
 
-        <div id="mensagem" class="mt-4 text-center fw-bold"></div>
     </div>
 
     <script>
         const API_URL = "http://127.0.0.1:8000";
 
-        // Função para trocar de tela sem recarregar a página
-        function showSection(sectionId) {
-            // Esconde todas as seções
-            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
-            // Remove classe active dos links
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        // FUNÇÃO DE TROCA DE ABAS (CORRIGIDA)
+        function switchTab(tabName) {
+            // 1. Esconde todas as seções
+            document.querySelectorAll('.section-home').forEach(section => {
+                section.classList.remove('active');
+            });
+            // 2. Remove o estado ativo de todos os botões da sidebar
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
             
-            // Mostra a selecionada
-            document.getElementById('section-' + sectionId).classList.add('active');
-            event.currentTarget.classList.add('active');
-            document.getElementById('mensagem').innerText = "";
+            // 3. Ativa a seção e o botão correspondente
+            const targetSection = document.getElementById('section-' + tabName);
+            const targetBtn = document.getElementById('btn-' + tabName);
+            
+            if (targetSection && targetBtn) {
+                targetSection.classList.add('active');
+                targetBtn.classList.add('active');
+            }
         }
 
-        // --- LÓGICA DE CADASTRO (Reutilizando seu código funcional) ---
+        // LOGIN (CORRIGIDO)
+        document.getElementById('formLogin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+
+            try {
+                const res = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, senha })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    sessionStorage.setItem('usuarioLogado', JSON.stringify(data));
+                    window.location.href = "dashboard.html";
+                } else {
+                    alert("E-mail ou senha incorretos.");
+                }
+            } catch (err) {
+                alert("Erro de conexão com o servidor. Verifique se o FastAPI está rodando.");
+            }
+        });
+
+        // CADASTRO
         document.getElementById('formCadastro').addEventListener('submit', async (e) => {
             e.preventDefault();
             const dados = {
-                nome: document.getElementById('nome').value,
-                email: document.getElementById('email').value,
-                senha: document.getElementById('senha').value
+                nome: document.getElementById('cad-nome').value,
+                email: document.getElementById('cad-email').value,
+                senha: document.getElementById('cad-senha').value
             };
 
-            try {
-                const response = await fetch(`${API_URL}/users/`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dados)
-                });
-                if (response.ok) {
-                    document.getElementById('mensagem').className = "text-success";
-                    document.getElementById('mensagem').innerText = "Sucesso! Agora faça o login.";
-                    showSection('login');
-                } else {
-                    document.getElementById('mensagem').className = "text-danger";
-                    document.getElementById('mensagem').innerText = "Erro ao cadastrar.";
-                }
-            } catch (err) { console.error(err); }
+            const res = await fetch(`${API_URL}/users/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
+
+            if (res.ok) {
+                alert("Cadastro realizado! Faça login.");
+                switchTab('login');
+            } else {
+                alert("Erro ao cadastrar.");
+            }
         });
 
-        // --- LÓGICA DE LOGIN ---
-        document.getElementById('formLogin').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const senha = document.getElementById('loginSenha').value;
-
+        // BUSCA PÚBLICA
+        async function pesquisarPublico() {
+            const destino = document.getElementById('busca-publica').value;
+            if(!destino) return;
             try {
-                const response = await fetch(`${API_URL}/users/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: "Login", email, senha })
-                });
-
-                const user = await response.json();
-
-                if (response.ok) {
-                    sessionStorage.setItem('usuarioLogado', JSON.stringify(user));
-                    window.location.href = "/static/dashboard.html";
-                } else {
-                    document.getElementById('mensagem').className = "text-danger";
-                    document.getElementById('mensagem').innerText = "Credenciais inválidas.";
-                }
-            } catch (err) { console.error(err); }
-        });
+                const res = await fetch(`${API_URL}/rides/search/${destino}`);
+                const caronas = await res.json();
+                const container = document.getElementById('lista-publica');
+                container.innerHTML = caronas.map(c => `
+                    <div class="p-3 mb-3 rounded carona-item shadow-sm">
+                        <div class="d-flex justify-content-between">
+                            <strong>Destino: ${destino}</strong>
+                            <span class="badge bg-primary">${c.vagas_totais} vagas</span>
+                        </div>
+                        <div class="text-muted small mt-1">${new Date(c.data_hora).toLocaleString()}</div>
+                        <div class="mt-2 text-primary small" style="cursor:pointer" onclick="switchTab('login')">Faça login para reservar →</div>
+                    </div>
+                `).join('') || '<p class="text-center text-muted">Nenhuma carona encontrada.</p>';
+            } catch (e) { alert("Erro ao buscar caronas."); }
+        }
     </script>
 </body>
 </html>

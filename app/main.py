@@ -1,21 +1,19 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from . import models, database
-from .routers import users, rides, history, vehicles # 1. Adicionado 'vehicles'
+from sqlalchemy.orm import Session
+from . import models, database, schemas
+from .routers import users, rides, history, vehicles, reservations # Adicionado reservations
 
-# Cria as tabelas no MySQL automaticamente ao iniciar o servidor
-# Isso garante que a tabela de Veículos e as outras existam no seu banco
+# Cria as tabelas no banco de dados automaticamente
 models.Base.metadata.create_all(bind=database.engine)
 
 app = FastAPI(
     title="Rota Compartilhada API",
-    description="Backend para sistema de caronas universitárias",
-    version="1.0.0"
+    version="1.1.0"
 )
 
-# 2. Configuração de CORS
-# Permite que o seu navegador (Front-end) se comunique com o Python (Back-end)
+# Configuração de CORS para comunicação com o Frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
@@ -24,22 +22,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 3. Montagem da pasta de arquivos estáticos
-# Essencial para que http://127.0.0.1:8000/static/index.html funcione
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# ROTA DE LOGIN (Correção do erro 404)
+@app.post("/login")
+def login(credentials: schemas.UserLogin, db: Session = Depends(database.get_db)):
+    user = db.query(models.Usuario).filter(models.Usuario.email == credentials.email).first()
+    if not user or user.senha != credentials.senha:
+        raise HTTPException(status_code=401, detail="E-mail ou senha incorretos")
+    return user
 
-# 4. Registro das Rotas (Endpoints)
-# Certifique-se de que cada arquivo .py existe dentro da pasta 'app/routers/'
+# Registro das Rotas
 app.include_router(users.router)
 app.include_router(rides.router)
 app.include_router(history.router)
-app.include_router(vehicles.router) # 5. Nova rota de veículos registrada
+app.include_router(vehicles.router)
+app.include_router(reservations.router) # Nova rota integrada
 
-# Rota raiz para verificação rápida de status
+# Montagem de arquivos estáticos
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 @app.get("/")
 def read_root():
-    return {
-        "status": "API Online",
-        "projeto": "Rota Compartilhada",
-        "docs": "Acesse /docs para testar as rotas manualmente"
-    }
+    return {"status": "API Online", "docs": "/docs"}

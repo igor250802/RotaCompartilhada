@@ -26,6 +26,11 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     senha: str
 
+# Adicionado para suportar a rota de login no main.py
+class UserLogin(BaseModel):
+    email: EmailStr
+    senha: str
+
 class UserResponse(UserBase):
     id_usuario: int
     data_cadastro: datetime
@@ -68,7 +73,7 @@ class ViagemCreate(BaseModel):
     id_veiculo: int
     data_hora: datetime
     vagas_totais: int
-    itinerario: List[ParadaBase] # Permite criar paradas junto com a viagem
+    itinerario: List[ParadaBase] 
 
 class ViagemResponse(BaseModel):
     id_viagem: int
@@ -88,11 +93,12 @@ class ReservaCreate(BaseModel):
     id_passageiro: int
     id_parada_embarque: int
     id_parada_desembarque: int
-    quantidade_bagagem: int = Field(default=0, ge=0) # RF06: Informar bagagem
+    quantidade_bagagem: int = Field(default=0, ge=0)
 
 class ReservaUpdateStatus(BaseModel):
-    status_solicitacao: ReservaStatus # RF07: Motorista aceita ou recusa
+    status_solicitacao: ReservaStatus
 
+# Corrigido: Adicionada a classe que faltava para o router history.py
 class ReservaResponse(ReservaCreate):
     id_reserva: int
     status_solicitacao: ReservaStatus
