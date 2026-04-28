@@ -8,29 +8,30 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         :root { --sidebar-width: 280px; --primary: #0d6efd; --dark: #212529; }
-        body { background-color: #f4f7f6; min-height: 100vh; }
+        body { background-color: #f4f7f6; min-height: 100vh; margin: 0; }
 
+        /* Sidebar */
         .sidebar {
             width: var(--sidebar-width); height: 100vh; position: fixed;
             background-color: var(--dark); color: white; z-index: 1000;
         }
-
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid #444; }
         .sidebar-header h4 { color: var(--primary); font-weight: bold; margin: 0; }
-
+        
         .nav-link {
             color: #adb5bd; padding: 15px 25px; display: flex;
             align-items: center; gap: 10px; transition: 0.2s; cursor: pointer;
+            text-decoration: none;
         }
-
         .nav-link:hover, .nav-link.active { background-color: #343a40; color: white; }
 
+        /* Main Content */
         .main-content {
             margin-left: var(--sidebar-width); padding: 40px;
             width: calc(100% - var(--sidebar-width));
         }
-
-        .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); background: white; }
+        
         .section-content { display: none; }
         .section-content.active { display: block; }
     </style>
@@ -40,17 +41,17 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <h4>Rota Sul</h4>
-            <div id="user-info" class="small text-muted mt-2"></div>
+            <div id="user-display" class="small text-muted mt-2"></div>
         </div>
         <nav class="nav flex-column mt-3">
-            <a class="nav-link active" onclick="showSection('resumo')">
+            <a class="nav-link active" onclick="showSection('resumo', this)">
                 <i class="material-icons">dashboard</i> Resumo
             </a>
-            <a class="nav-link" onclick="showSection('veiculos')">
+            <a class="nav-link" onclick="showSection('veiculos', this)">
                 <i class="material-icons">directions_car</i> Meus Veículos
             </a>
-            <a class="nav-link" onclick="showSection('caronas')">
-                <i class="material-icons">map</i> Minhas Caronas
+            <a class="nav-link" onclick="showSection('caronas', this)">
+                <i class="material-icons">map</i> Oferecer Carona
             </a>
             <hr class="mx-3 text-secondary">
             <a class="nav-link text-danger" onclick="logout()">
@@ -63,126 +64,212 @@
         
         <div id="section-resumo" class="section-content active">
             <h2 id="welcome-msg">Bem-vindo!</h2>
-            <p class="text-muted">O que deseja fazer hoje?</p>
-            <div class="row mt-4">
-                <div class="col-md-4">
-                    <div class="card card-custom p-4 text-center">
-                        <i class="material-icons text-primary mb-2" style="font-size: 48px;">add_location</i>
-                        <h5>Oferecer Carona</h5>
-                        <button class="btn btn-primary btn-sm mt-2" onclick="showSection('caronas')">Criar Rota</button>
-                    </div>
-                </div>
-            </div>
+            <p class="text-muted">Gestão de caronas para o sul de Minas.</p>
+            <div class="alert alert-info">Utilize o menu lateral para gerir os seus veículos e viagens.</div>
         </div>
 
         <div id="section-veiculos" class="section-content">
             <div class="card card-custom p-4">
-                <h3>Meus Veículos</h3>
-                <form id="formVeiculo" class="row g-3 mt-2">
+                <h3>Gerenciar Veículos</h3>
+                <form id="formVeiculo" class="row g-3 mt-3">
                     <div class="col-md-4">
                         <label class="form-label">Modelo</label>
                         <input type="text" id="v-modelo" class="form-control" placeholder="Ex: Corolla" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Placa</label>
-                        <input type="text" id="v-placa" class="form-control" placeholder="ABC-1234" required>
+                        <input type="text" id="v-placa" class="form-control" placeholder="ABC1D23" required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Cor</label>
-                        <input type="text" id="v-cor" class="form-control">
+                        <input type="text" id="v-cor" class="form-control" placeholder="Branco">
                     </div>
                     <div class="col-md-2">
                         <label class="form-label">Ano</label>
-                        <input type="number" id="v-ano" class="form-control" required>
+                        <input type="number" id="v-ano" class="form-control" value="2024" required>
                     </div>
                     <div class="col-12">
-                        <button type="submit" class="btn btn-success">Cadastrar Veículo</button>
+                        <button type="submit" class="btn btn-success">Salvar Veículo</button>
                     </div>
                 </form>
-                <hr>
-                <div id="lista-veiculos" class="mt-3">
-                    </div>
+                <hr class="my-4">
+                <h5>Meus Veículos Cadastrados</h5>
+                <div id="lista-veiculos" class="mt-3"></div>
             </div>
         </div>
 
         <div id="section-caronas" class="section-content">
-            <h3>Minhas Caronas</h3>
-            <p>Gerencie suas rotas e horários.</p>
+            <div class="card card-custom p-4">
+                <h3>Oferecer Carona</h3>
+                <form id="formViagem" class="row g-3 mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Selecione o Veículo</label>
+                        <select id="v-viagem-veiculo" class="form-select" required></select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Data e Hora</label>
+                        <input type="datetime-local" id="v-viagem-data" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Vagas</label>
+                        <input type="number" id="v-viagem-vagas" class="form-control" min="1" max="6" value="4" required>
+                    </div>
+                    <div class="col-12 mt-4">
+                        <h6>Itinerário (Cidades)</h6>
+                        <div id="container-paradas">
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">Origem</span>
+                                <input type="text" class="form-control cidade-input" placeholder="Ex: Muzambinho" required>
+                            </div>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text">Destino</span>
+                                <input type="text" class="form-control cidade-input" placeholder="Ex: Guaxupé" required>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="adicionarCidade()">+ Parada</button>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Publicar Carona</button>
+                    </div>
+                </form>
             </div>
-
-        <div id="mensagem" class="mt-4 text-center fw-bold"></div>
+        </div>
     </div>
 
     <script>
         const API_URL = "http://127.0.0.1:8000";
         
-        // 1. Verificação de Segurança (Session)
+        // --- SESSÃO ---
         const usuario = JSON.parse(sessionStorage.getItem('usuarioLogado'));
         if (!usuario) {
             window.location.href = "index.html";
         } else {
-            document.getElementById('user-info').innerText = usuario.email;
+            document.getElementById('user-display').innerText = usuario.email;
             document.getElementById('welcome-msg').innerText = `Olá, ${usuario.nome}!`;
         }
 
-        function showSection(id) {
+        // --- NAVEGAÇÃO ---
+        function showSection(id, element) {
             document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             document.getElementById('section-' + id).classList.add('active');
-            event.currentTarget.classList.add('active');
-            
+            if(element) element.classList.add('active');
+
             if(id === 'veiculos') carregarVeiculos();
+            if(id === 'caronas') carregarVeiculosParaSelect();
         }
 
-        // --- CADASTRO DE VEÍCULO (RF03) ---
+        // --- GESTÃO DE VEÍCULOS ---
         document.getElementById('formVeiculo').addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const dados = {
                 modelo: document.getElementById('v-modelo').value,
                 placa: document.getElementById('v-placa').value,
-                cor: document.getElementById('v-cor').value,
+                cor: document.getElementById('v-cor').value || null,
                 ano: parseInt(document.getElementById('v-ano').value),
-                id_proprietario: usuario.id_usuario
+                id_proprietario: parseInt(usuario.id_usuario) // GARANTE QUE É INTEIRO
             };
 
-            const response = await fetch(`${API_URL}/vehicles/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dados)
-            });
+            console.log("Enviando veículo:", dados);
 
-            if (response.ok) {
-                alert("Veículo cadastrado!");
-                document.getElementById('formVeiculo').reset();
-                carregarVeiculos();
+            try {
+                const res = await fetch(`${API_URL}/vehicles/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                if (res.ok) {
+                    alert("Veículo registado!");
+                    document.getElementById('formVeiculo').reset();
+                    carregarVeiculos();
+                } else {
+                    const erro = await res.json();
+                    console.error("Erro no servidor:", erro);
+                    alert("Erro ao salvar: " + JSON.stringify(erro.detail));
+                }
+            } catch (err) {
+                alert("Erro de conexão.");
             }
         });
 
-        // --- LISTAR VEÍCULOS ---
         async function carregarVeiculos() {
-            const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
-            const veiculos = await res.json();
-            const container = document.getElementById('lista-veiculos');
-            
-            if(veiculos.length === 0) {
-                container.innerHTML = "<p class='text-muted'>Nenhum veículo cadastrado.</p>";
-                return;
-            }
-
-            container.innerHTML = veiculos.map(v => `
-                <div class="d-flex justify-content-between align-items-center p-3 mb-2 bg-white rounded border">
-                    <span><strong>${v.modelo}</strong> - ${v.placa} (${v.cor})</span>
-                    <button class="btn btn-outline-danger btn-sm" onclick="deletarVeiculo(${v.id_veiculo})">Excluir</button>
-                </div>
-            `).join('');
+            try {
+                const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
+                const veiculos = await res.json();
+                const lista = document.getElementById('lista-veiculos');
+                
+                lista.innerHTML = veiculos.length ? veiculos.map(v => `
+                    <div class="d-flex justify-content-between align-items-center p-3 mb-2 bg-light border rounded">
+                        <span><strong>${v.modelo}</strong> (${v.placa})</span>
+                        <button class="btn btn-sm btn-outline-danger" onclick="excluirVeiculo(${v.id_veiculo})">Remover</button>
+                    </div>
+                `).join('') : '<p class="text-muted">Nenhum veículo.</p>';
+            } catch (err) { console.error(err); }
         }
 
-        async function deletarVeiculo(id) {
-            if(confirm("Deseja excluir este veículo?")) {
+        async function excluirVeiculo(id) {
+            if(confirm("Deseja remover este veículo?")) {
                 await fetch(`${API_URL}/vehicles/${id}`, { method: 'DELETE' });
                 carregarVeiculos();
             }
         }
+
+        // --- OFERECER CARONA ---
+        async function carregarVeiculosParaSelect() {
+            const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
+            const veiculos = await res.json();
+            const select = document.getElementById('v-viagem-veiculo');
+            
+            if(veiculos.length === 0) {
+                select.innerHTML = '<option value="">CADASTRAR VEÍCULO PRIMEIRO</option>';
+            } else {
+                select.innerHTML = veiculos.map(v => `<option value="${v.id_veiculo}">${v.modelo} [${v.placa}]</option>`).join('');
+            }
+        }
+
+        function adicionarCidade() {
+            const container = document.getElementById('container-paradas');
+            const div = document.createElement('div');
+            div.className = 'input-group mb-2';
+            div.innerHTML = `
+                <span class="input-group-text">Parada</span>
+                <input type="text" class="form-control cidade-input" required>
+                <button type="button" class="btn btn-outline-danger" onclick="this.parentElement.remove()">X</button>
+            `;
+            container.appendChild(div);
+        }
+
+        document.getElementById('formViagem').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputs = document.querySelectorAll('.cidade-input');
+            const itinerario = Array.from(inputs).map((input, i) => ({
+                cidade: input.value,
+                ordem_parada: i + 1
+            }));
+
+            const dadosViagem = {
+                id_motorista: usuario.id_usuario,
+                id_veiculo: parseInt(document.getElementById('v-viagem-veiculo').value),
+                data_hora: document.getElementById('v-viagem-data').value,
+                vagas_totais: parseInt(document.getElementById('v-viagem-vagas').value),
+                itinerario: itinerario
+            };
+
+            const res = await fetch(`${API_URL}/rides/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dadosViagem)
+            });
+
+            if(res.ok) {
+                alert("Carona publicada!");
+                showSection('resumo');
+            } else {
+                alert("Erro ao publicar viagem.");
+            }
+        });
 
         function logout() {
             sessionStorage.clear();
