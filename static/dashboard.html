@@ -9,50 +9,39 @@
     <style>
         :root { --sidebar-width: 260px; --primary: #0d6efd; --dark: #212529; }
         body { background-color: #f8f9fa; min-height: 100vh; margin: 0; display: flex; }
-        
         .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; background: var(--dark); color: white; z-index: 1000; }
         .sidebar-header { padding: 20px; border-bottom: 1px solid #444; text-align: center; }
         .nav-link { color: #adb5bd; padding: 12px 20px; display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
         .nav-link:hover, .nav-link.active { background: #343a40; color: white; }
-        
         .main-content { margin-left: var(--sidebar-width); padding: 40px; width: 100%; }
         .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: white; }
         .section-content { display: none; }
         .section-content.active { display: block; }
-        
         .carona-card { border-left: 5px solid var(--primary); background: #fff; transition: 0.3s; margin-bottom: 15px; }
         .carona-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
-        .status-badge { font-size: 0.8rem; padding: 5px 10px; border-radius: 20px; }
     </style>
 </head>
 <body>
-
     <div class="sidebar">
-        <div class="sidebar-header">
-            <h4 class="text-primary mb-0">Rota Sul</h4>
-            <small id="user-display" class="text-muted"></small>
-        </div>
+        <div class="sidebar-header"><h4 class="text-primary mb-0">Rota Sul</h4><small id="user-display" class="text-muted"></small></div>
         <nav class="nav flex-column mt-3">
             <a class="nav-link active" onclick="showSection('resumo', this)"><i class="material-icons">dashboard</i> Resumo</a>
             <a class="nav-link" onclick="showSection('veiculos', this)"><i class="material-icons">directions_car</i> Meus Veículos</a>
             <a class="nav-link" onclick="showSection('oferecer', this)"><i class="material-icons">add_location</i> Oferecer Carona</a>
             <a class="nav-link" onclick="showSection('procurar', this)"><i class="material-icons">search</i> Procurar Carona</a>
             <a class="nav-link" onclick="showSection('solicitacoes', this)"><i class="material-icons">notifications</i> Solicitações</a>
+            <a class="nav-link" onclick="showSection('historico', this)"><i class="material-icons">history</i> Meu Histórico</a>
             <hr class="mx-3 border-secondary">
             <a class="nav-link text-danger" onclick="logout()"><i class="material-icons">logout</i> Sair</a>
         </nav>
     </div>
 
     <div class="main-content">
+        <div id="section-resumo" class="section-content active"><h2>Bem-vindo!</h2><p class="text-muted">Selecione uma opção no menu lateral.</p></div>
         
-        <div id="section-resumo" class="section-content active">
-            <h2 id="welcome-msg">Bem-vindo!</h2>
-            <p class="text-muted">Selecione uma opção no menu para começar.</p>
-        </div>
-
         <div id="section-veiculos" class="section-content">
             <div class="card card-custom p-4">
-                <h3>Gerenciar Veículos</h3>
+                <h3>Meus Veículos</h3>
                 <form id="formVeiculo" class="row g-3 mt-2">
                     <div class="col-md-4"><input type="text" id="v-modelo" class="form-control" placeholder="Modelo" required></div>
                     <div class="col-md-3"><input type="text" id="v-placa" class="form-control" placeholder="Placa" required></div>
@@ -68,15 +57,14 @@
             <div class="card card-custom p-4">
                 <h3>Oferecer Carona</h3>
                 <form id="formViagem" class="row g-3 mt-2">
-                    <div class="col-md-6"><label class="form-label">Veículo</label><select id="select-veiculos" class="form-select" required></select></div>
-                    <div class="col-md-3"><label class="form-label">Data/Hora</label><input type="datetime-local" id="viagem-data" class="form-control" required></div>
-                    <div class="col-md-3"><label class="form-label">Vagas</label><input type="number" id="viagem-vagas" class="form-control" value="4" min="1"></div>
+                    <div class="col-md-6"><label>Veículo</label><select id="select-veiculos" class="form-select" required></select></div>
+                    <div class="col-md-3"><label>Data/Hora</label><input type="datetime-local" id="viagem-data" class="form-control" required></div>
+                    <div class="col-md-3"><label>Vagas</label><input type="number" id="viagem-vagas" class="form-control" value="4"></div>
                     <div class="col-12" id="container-paradas">
-                        <label class="form-label">Itinerário (Origem e Destino)</label>
                         <input type="text" class="form-control cidade-input mb-2" placeholder="Cidade de Origem" required>
                         <input type="text" class="form-control cidade-input mb-2" placeholder="Cidade de Destino" required>
                     </div>
-                    <div class="col-12"><button type="submit" class="btn btn-primary w-100">Publicar Carona</button></div>
+                    <button type="submit" class="btn btn-primary w-100">Publicar Carona</button>
                 </form>
             </div>
         </div>
@@ -95,20 +83,27 @@
         <div id="section-solicitacoes" class="section-content">
             <div class="card card-custom p-4">
                 <h3>Solicitações Recebidas</h3>
-                <p class="text-muted">Aprove ou recuse passageiros para as suas viagens.</p>
                 <div id="lista-solicitacoes" class="mt-3"></div>
             </div>
         </div>
 
+        <div id="section-historico" class="section-content">
+            <div class="card card-custom p-4">
+                <h3>Meu Histórico</h3>
+                <ul class="nav nav-tabs mb-3">
+                    <li class="nav-item"><button class="nav-link active" id="btn-hist-mot" onclick="listarHistorico('motorista')">Caronas Oferecidas</button></li>
+                    <li class="nav-item"><button class="nav-link" id="btn-hist-pas" onclick="listarHistorico('passageiro')">Caronas Solicitadas</button></li>
+                </ul>
+                <div id="lista-historico"></div>
+            </div>
+        </div>
     </div>
 
     <script>
         const API_URL = "http://127.0.0.1:8000";
         const usuario = JSON.parse(sessionStorage.getItem('usuarioLogado'));
-
         if (!usuario) window.location.href = "index.html";
         document.getElementById('user-display').innerText = usuario.email;
-        document.getElementById('welcome-msg').innerText = `Olá, ${usuario.nome}!`;
 
         function showSection(id, el) {
             document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
@@ -119,81 +114,24 @@
             if(id === 'veiculos') listarVeiculos();
             if(id === 'oferecer') carregarVeiculosNoSelect();
             if(id === 'solicitacoes') listarSolicitacoes();
+            if(id === 'historico') listarHistorico('motorista');
         }
 
-        // --- VEÍCULOS ---
-        async function listarVeiculos() {
-            const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
-            const data = await res.json();
-            const container = document.getElementById('lista-veiculos');
-            container.innerHTML = data.map(v => `
-                <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
-                    <span><strong>${v.modelo}</strong> (${v.placa})</span>
-                    <button class="btn btn-sm btn-outline-danger" onclick="deletarVeiculo(${v.id_veiculo})">Excluir</button>
+        async function listarHistorico(tipo) {
+            document.getElementById('btn-hist-mot').classList.toggle('active', tipo === 'motorista');
+            document.getElementById('btn-hist-pas').classList.toggle('active', tipo === 'passageiro');
+            
+            let url = tipo === 'motorista' ? `${API_URL}/history/driver/${usuario.id_usuario}` : `${API_URL}/history/passenger/${usuario.id_usuario}`;
+            const res = await fetch(url);
+            const dados = await res.json();
+            
+            document.getElementById('lista-historico').innerHTML = dados.map(d => `
+                <div class="p-3 border-bottom">
+                    <strong>${tipo === 'motorista' ? 'Viagem #' + d.id_viagem : 'Reserva #' + d.id_reserva}</strong><br>
+                    <small>Data: ${new Date(d.data_hora || d.data_solicitacao).toLocaleString()}</small><br>
+                    <span class="badge bg-secondary">${d.status_viagem || d.status_solicitacao}</span>
                 </div>
-            `).join('') || '<p class="text-muted">Nenhum veículo cadastrado.</p>';
-        }
-
-        document.getElementById('formVeiculo').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const dados = {
-                modelo: document.getElementById('v-modelo').value,
-                placa: document.getElementById('v-placa').value,
-                cor: document.getElementById('v-cor').value,
-                ano: parseInt(document.getElementById('v-ano').value),
-                id_proprietario: usuario.id_usuario
-            };
-            await fetch(`${API_URL}/vehicles/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dados)
-            });
-            listarVeiculos();
-        });
-
-        // --- CARONAS ---
-        async function carregarVeiculosNoSelect() {
-            const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
-            const data = await res.json();
-            document.getElementById('select-veiculos').innerHTML = data.map(v => 
-                `<option value="${v.id_veiculo}">${v.modelo} (${v.placa})</option>`
-            ).join('') || '<option disabled>Cadastre um veículo primeiro</option>';
-        }
-
-        async function pesquisarCaronas() {
-            const destino = document.getElementById('busca-destino').value;
-            const res = await fetch(`${API_URL}/rides/search/${destino}`);
-            const caronas = await res.json();
-            document.getElementById('resultados-busca').innerHTML = caronas.map(c => `
-                <div class="col-md-6">
-                    <div class="card p-3 carona-card shadow-sm border-0">
-                        <div class="d-flex justify-content-between">
-                            <h5 class="text-primary">Viagem #${c.id_viagem}</h5>
-                            <span class="badge bg-success">${c.vagas_totais} vagas</span>
-                        </div>
-                        <p class="small mb-1">Data: ${new Date(c.data_hora).toLocaleString()}</p>
-                        <button class="btn btn-sm btn-primary w-100 mt-2" onclick="solicitarVaga(${c.id_viagem})">Solicitar Vaga</button>
-                    </div>
-                </div>
-            `).join('') || '<p class="text-center">Nenhuma carona encontrada.</p>';
-        }
-
-        // --- RESERVAS (RF06 / RF07) ---
-        async function solicitarVaga(idViagem) {
-            const dados = {
-                id_viagem: idViagem,
-                id_passageiro: usuario.id_usuario,
-                id_parada_embarque: 1, 
-                id_parada_desembarque: 2,
-                quantidade_bagagem: 0
-            };
-            const res = await fetch(`${API_URL}/reservations/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dados)
-            });
-            if(res.ok) alert("Reserva solicitada com sucesso!");
-            else alert("Erro ao solicitar vaga.");
+            `).join('') || '<p class="text-muted">Nenhum registro encontrado.</p>';
         }
 
         async function listarSolicitacoes() {
@@ -201,10 +139,7 @@
             const dados = await res.json();
             document.getElementById('lista-solicitacoes').innerHTML = dados.map(r => `
                 <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>Pedido #${r.id_reserva}</strong> - Viagem #${r.id_viagem}<br>
-                        <span class="badge bg-info text-dark">${r.status_solicitacao}</span>
-                    </div>
+                    <div><strong>Viagem #${r.id_viagem}</strong><br><span class="badge bg-info">${r.status_solicitacao}</span></div>
                     ${r.status_solicitacao === 'Pendente' ? `
                     <div>
                         <button class="btn btn-sm btn-success" onclick="decidirReserva(${r.id_reserva}, 'Aceita')">Aceitar</button>
@@ -221,6 +156,41 @@
                 body: JSON.stringify({ status_solicitacao: status })
             });
             listarSolicitacoes();
+        }
+
+        async function pesquisarCaronas() {
+            const res = await fetch(`${API_URL}/rides/search/${document.getElementById('busca-destino').value}`);
+            const caronas = await res.json();
+            document.getElementById('resultados-busca').innerHTML = caronas.map(c => `
+                <div class="col-md-6">
+                    <div class="card p-3 carona-card border-0 shadow-sm">
+                        <h5>Viagem #${c.id_viagem}</h5>
+                        <p>${c.vagas_totais} vagas disponíveis</p>
+                        <button class="btn btn-sm btn-primary w-100" onclick="solicitarVaga(${c.id_viagem})">Solicitar Vaga</button>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-center">Nenhuma carona encontrada.</p>';
+        }
+
+        async function solicitarVaga(id) {
+            const res = await fetch(`${API_URL}/reservations/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_viagem: id, id_passageiro: usuario.id_usuario, id_parada_embarque: 1, id_parada_desembarque: 2, quantidade_bagagem: 0 })
+            });
+            if(res.ok) alert("Reserva solicitada!");
+        }
+
+        async function listarVeiculos() {
+            const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
+            const data = await res.json();
+            document.getElementById('lista-veiculos').innerHTML = data.map(v => `<div class="p-2 border-bottom">${v.modelo} (${v.placa})</div>`).join('') || '<p>Nenhum veículo.</p>';
+        }
+
+        async function carregarVeiculosNoSelect() {
+            const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
+            const data = await res.json();
+            document.getElementById('select-veiculos').innerHTML = data.map(v => `<option value="${v.id_veiculo}">${v.modelo}</option>`).join('');
         }
 
         function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
