@@ -3,140 +3,185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rota Sul - Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Rota 99 - Entrar ou Cadastrar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        :root { --sidebar-width: 280px; --primary: #0d6efd; --dark: #212529; }
-        body { background-color: #f4f7f6; min-height: 100vh; margin: 0; display: flex; }
+        :root {
+            --chumbo-dark: #1a1a1a;
+            --chumbo-med: #2c3e50;
+            --bg: #f4f7f6;
+            --white: #ffffff;
+        }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            display: flex;
+        }
+
+        /* Sidebar similar ao Dashboard */
         .sidebar {
-            width: var(--sidebar-width); height: 100vh; position: fixed;
-            background-color: var(--dark); color: white; z-index: 1000;
+            width: 280px;
+            height: 100vh;
+            background-color: var(--chumbo-dark);
+            color: white;
+            position: fixed;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
         }
-        .sidebar-header { padding: 25px; text-align: center; border-bottom: 1px solid #444; }
-        .sidebar-header h4 { color: var(--primary); font-weight: bold; margin: 0; }
-        
-        .nav-link {
-            color: #adb5bd; padding: 15px 25px; display: flex;
-            align-items: center; gap: 10px; transition: 0.2s; cursor: pointer;
+
+        .brand { font-size: 1.5rem; font-weight: 600; margin-bottom: 40px; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 8px;
+            color: #bdc3c7;
             text-decoration: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .nav-link:hover, .nav-link.active { background-color: #343a40; color: white; }
 
+        .nav-item i { margin-right: 15px; }
+        .nav-item:hover, .nav-item.active { background-color: var(--chumbo-med); color: white; }
+
+        /* Área de Conteúdo */
         .main-content {
-            margin-left: var(--sidebar-width); padding: 60px;
-            width: calc(100% - var(--sidebar-width));
-            display: flex; justify-content: center; align-items: flex-start;
+            margin-left: 280px;
+            padding: 60px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
 
-        .card-custom { 
-            border: none; border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            background: white; width: 100%; max-width: 500px; 
+        .auth-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 450px;
+            display: none; /* Escondido por padrão */
         }
-        
-        .section-home { display: none; }
-        .section-home.active { display: block; }
 
-        .carona-item { border-left: 4px solid var(--primary); background: #f8f9fa; }
+        .auth-card.active { display: block; }
+
+        h2 { margin-top: 0; color: var(--chumbo-dark); }
+        p { color: #7f8c8d; font-size: 0.9rem; margin-bottom: 25px; }
+
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        .btn-99 {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--chumbo-dark);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-99:hover { background-color: #333; }
+
+        /* Estilo para busca pública */
+        .ride-mini-card {
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            background: #fafafa;
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h4>Rota Sul</h4>
-        </div>
-        <nav class="nav flex-column mt-3">
-            <a class="nav-link active" id="btn-login" onclick="switchTab('login')">
+    <aside class="sidebar">
+        <div class="brand">Rota 99</div>
+        <nav>
+            <div class="nav-item active" id="btn-login" onclick="switchTab('login')">
                 <i class="material-icons">login</i> Entrar
-            </a>
-            <a class="nav-link" id="btn-cadastro" onclick="switchTab('cadastro')">
-                <i class="material-icons">person_add</i> Cadastrar-se
-            </a>
-            <a class="nav-link" id="btn-explorar" onclick="switchTab('explorar')">
-                <i class="material-icons">search</i> Explorar Caronas
-            </a>
+            </div>
+            <div class="nav-item" id="btn-cadastro" onclick="switchTab('cadastro')">
+                <i class="material-icons">person_add</i> Criar Conta
+            </div>
+            <div class="nav-item" id="btn-explorar" onclick="switchTab('explorar')">
+                <i class="material-icons">search</i> Ver Caronas
+            </div>
         </nav>
-    </div>
+    </aside>
 
-    <div class="main-content">
-        
-        <div id="section-login" class="section-home active card-custom p-5">
-            <h3 class="text-center mb-4">Login</h3>
+    <main class="main-content">
+        <div id="section-login" class="auth-card active">
+            <h2>Bem-vindo de volta</h2>
+            <p>Acesse sua conta para reservar sua próxima carona.</p>
             <form id="formLogin">
-                <div class="mb-3">
-                    <label class="form-label">E-mail</label>
-                    <input type="email" id="email" class="form-control" required placeholder="seu@email.com">
-                </div>
-                <div class="mb-4">
-                    <label class="form-label">Senha</label>
-                    <input type="password" id="senha" class="form-control" required placeholder="******">
-                </div>
-                <button type="submit" class="btn btn-primary w-100 py-2">Entrar</button>
+                <label>E-mail</label>
+                <input type="email" id="login-email" placeholder="exemplo@email.com" required>
+                <label>Senha</label>
+                <input type="password" id="login-senha" placeholder="••••••••" required>
+                <button type="submit" class="btn-99">Entrar</button>
             </form>
         </div>
 
-        <div id="section-cadastro" class="section-home card-custom p-5">
-            <h3 class="text-center mb-4">Criar Conta</h3>
+        <div id="section-cadastro" class="auth-card">
+            <h2>Criar nova conta</h2>
+            <p>Junte-se à maior rede de caronas do Sul de Minas.</p>
             <form id="formCadastro">
-                <div class="mb-3">
-                    <label class="form-label">Nome Completo</label>
-                    <input type="text" id="cad-nome" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">E-mail</label>
-                    <input type="email" id="cad-email" class="form-control" required>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label">Senha</label>
-                    <input type="password" id="cad-senha" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-success w-100 py-2">Finalizar Cadastro</button>
+                <label>Nome Completo</label>
+                <input type="text" id="cad-nome" placeholder="Seu nome" required>
+                <label>E-mail</label>
+                <input type="email" id="cad-email" placeholder="seu@email.com" required>
+                <label>Telefone</label>
+                <input type="text" id="cad-tel" placeholder="(35) 99999-9999">
+                <label>Senha</label>
+                <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" required>
+                <button type="submit" class="btn-99">Cadastrar</button>
             </form>
         </div>
 
-        <div id="section-explorar" class="section-home card-custom p-5" style="max-width: 700px;">
-            <h3 class="mb-4">Caronas Disponíveis</h3>
-            <div class="input-group mb-4">
-                <input type="text" id="busca-publica" class="form-control" placeholder="Cidade de destino...">
-                <button class="btn btn-primary" onclick="pesquisarPublico()">Buscar</button>
+        <div id="section-explorar" class="auth-card" style="max-width: 600px;">
+            <h2>Explorar Caronas</h2>
+            <p>Veja as viagens disponíveis agora mesmo.</p>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="busca-publica" placeholder="Para onde você vai?" style="margin-bottom:0">
+                <button class="btn-99" style="width:120px" onclick="pesquisarPublico()">Buscar</button>
             </div>
             <div id="lista-publica"></div>
         </div>
-
-    </div>
+    </main>
 
     <script>
-        const API_URL = "http://127.0.0.1:8000";
+        const API_URL = "http://localhost:8000";
 
-        // FUNÇÃO DE TROCA DE ABAS (CORRIGIDA)
-        function switchTab(tabName) {
-            // 1. Esconde todas as seções
-            document.querySelectorAll('.section-home').forEach(section => {
-                section.classList.remove('active');
-            });
-            // 2. Remove o estado ativo de todos os botões da sidebar
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
+        function switchTab(tab) {
+            document.querySelectorAll('.auth-card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             
-            // 3. Ativa a seção e o botão correspondente
-            const targetSection = document.getElementById('section-' + tabName);
-            const targetBtn = document.getElementById('btn-' + tabName);
-            
-            if (targetSection && targetBtn) {
-                targetSection.classList.add('active');
-                targetBtn.classList.add('active');
-            }
+            document.getElementById('section-' + tab).classList.add('active');
+            document.getElementById('btn-' + tab).classList.add('active');
         }
 
-        // LOGIN (CORRIGIDO)
+        // Login integrado com sessionStorage (como no seu original)
         document.getElementById('formLogin').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
+            const email = document.getElementById('login-email').value;
+            const senha = document.getElementById('login-senha').value;
 
             try {
                 const res = await fetch(`${API_URL}/login`, {
@@ -147,22 +192,24 @@
 
                 if (res.ok) {
                     const data = await res.json();
-                    sessionStorage.setItem('usuarioLogado', JSON.stringify(data));
+                    // IMPORTANTE: dashboard.html usará esta chave 'usuario'
+                    localStorage.setItem('usuario', JSON.stringify(data));
                     window.location.href = "dashboard.html";
                 } else {
                     alert("E-mail ou senha incorretos.");
                 }
             } catch (err) {
-                alert("Erro de conexão com o servidor. Verifique se o FastAPI está rodando.");
+                alert("Erro ao conectar ao servidor.");
             }
         });
 
-        // CADASTRO
+        // Cadastro integrado com seu users.py
         document.getElementById('formCadastro').addEventListener('submit', async (e) => {
             e.preventDefault();
             const dados = {
                 nome: document.getElementById('cad-nome').value,
                 email: document.getElementById('cad-email').value,
+                telefone: document.getElementById('cad-tel').value,
                 senha: document.getElementById('cad-senha').value
             };
 
@@ -173,32 +220,35 @@
             });
 
             if (res.ok) {
-                alert("Cadastro realizado! Faça login.");
+                alert("Cadastro realizado! Agora faça seu login.");
                 switchTab('login');
             } else {
-                alert("Erro ao cadastrar.");
+                alert("Erro ao cadastrar usuário.");
             }
         });
 
-        // BUSCA PÚBLICA
+        // Busca pública de caronas (sem precisar estar logado)
         async function pesquisarPublico() {
             const destino = document.getElementById('busca-publica').value;
             if(!destino) return;
-            try {
-                const res = await fetch(`${API_URL}/rides/search/${destino}`);
-                const caronas = await res.json();
-                const container = document.getElementById('lista-publica');
-                container.innerHTML = caronas.map(c => `
-                    <div class="p-3 mb-3 rounded carona-item shadow-sm">
-                        <div class="d-flex justify-content-between">
-                            <strong>Destino: ${destino}</strong>
-                            <span class="badge bg-primary">${c.vagas_totais} vagas</span>
-                        </div>
-                        <div class="text-muted small mt-1">${new Date(c.data_hora).toLocaleString()}</div>
-                        <div class="mt-2 text-primary small" style="cursor:pointer" onclick="switchTab('login')">Faça login para reservar →</div>
+            const res = await fetch(`${API_URL}/rides/search/${destino}`);
+            const caronas = await res.json();
+            const container = document.getElementById('lista-publica');
+            
+            container.innerHTML = caronas.map(c => `
+                <div class="ride-mini-card">
+                    <div style="display:flex; justify-content:space-between">
+                        <strong>${destino}</strong>
+                        <span style="color:var(--chumbo-med); font-weight:600">${c.vagas_totais} vagas</span>
                     </div>
-                `).join('') || '<p class="text-center text-muted">Nenhuma carona encontrada.</p>';
-            } catch (e) { alert("Erro ao buscar caronas."); }
+                    <div style="font-size:0.8rem; color:#7f8c8d; margin-top:5px">
+                        ${new Date(c.data_hora).toLocaleString()}
+                    </div>
+                    <div style="margin-top:10px; font-size:0.8rem; color:blue; cursor:pointer" onclick="switchTab('login')">
+                        Faça login para reservar →
+                    </div>
+                </div>
+            `).join('') || '<p>Nenhuma carona encontrada.</p>';
         }
     </script>
 </body>
