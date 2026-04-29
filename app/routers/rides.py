@@ -26,7 +26,7 @@ def oferecer_carona(obj_in: schemas.ViagemCreate, db: Session = Depends(database
             ordem_parada=p.ordem_parada
         )
         db.add(nova_parada)
-    
+
     db.commit()
     db.refresh(nova_viagem)
     return nova_viagem
@@ -39,3 +39,16 @@ def buscar_caronas(destino: str, db: Session = Depends(database.get_db)):
         models.Viagem.status_viagem == "Aberta",
         models.Viagem.vagas_totais > 0
     ).distinct().all()
+
+@router.get("/{id_viagem}/stops", response_model=List[schemas.ParadaResponse])
+def listar_paradas_viagem(id_viagem: int, db: Session = Depends(database.get_db)):
+    """Retorna todas as paradas de uma viagem ordenadas pela sequência"""
+    viagem = db.query(models.Viagem).filter(models.Viagem.id_viagem == id_viagem).first()
+    if not viagem:
+        raise HTTPException(status_code=404, detail="Viagem não encontrada")
+
+    paradas = db.query(models.Parada).filter(
+        models.Parada.id_viagem == id_viagem
+    ).order_by(models.Parada.ordem_parada).all()
+
+    return paradas

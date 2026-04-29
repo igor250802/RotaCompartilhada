@@ -594,21 +594,33 @@
     <div class="modal-title">Solicitar carona</div>
     <div id="msg-modal"></div>
     <input type="hidden" id="modal-id-viagem">
-    <div class="field">
-      <label>Ponto de embarque (ID da parada)</label>
-      <input type="number" id="modal-embarque" placeholder="ID da parada de origem">
+
+    <div id="modal-loading" class="alert alert-info" style="display:none">
+      <span class="loading loading-dark"></span> Carregando paradas da viagem...
     </div>
-    <div class="field">
-      <label>Ponto de desembarque (ID da parada)</label>
-      <input type="number" id="modal-desembarque" placeholder="ID da parada de destino">
+
+    <div id="modal-fields">
+      <div class="field">
+        <label>Cidade de embarque</label>
+        <select id="modal-embarque">
+          <option value="">Selecione a cidade de origem</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Cidade de desembarque</label>
+        <select id="modal-desembarque">
+          <option value="">Selecione a cidade de destino</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Quantidade de bagagens</label>
+        <input type="number" id="modal-bagagem" value="0" min="0" max="5">
+      </div>
     </div>
-    <div class="field">
-      <label>Quantidade de bagagens</label>
-      <input type="number" id="modal-bagagem" value="0" min="0" max="5">
-    </div>
+
     <div class="modal-actions">
       <button class="btn" onclick="fecharModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmarReserva()">Confirmar solicitação</button>
+      <button class="btn btn-primary" id="btn-confirmar-reserva" onclick="confirmarReserva()">Confirmar solicitação</button>
     </div>
   </div>
 </div>
@@ -697,13 +709,42 @@ async function buscarCaronas() {
 }
 
 /* ═══ MODAL RESERVA ═══ */
-function abrirModal(idViagem) {
+async function abrirModal(idViagem) {
   document.getElementById('modal-id-viagem').value = idViagem;
   document.getElementById('msg-modal').innerHTML = '';
-  document.getElementById('modal-embarque').value = '';
-  document.getElementById('modal-desembarque').value = '';
   document.getElementById('modal-bagagem').value = '0';
+  document.getElementById('modal-loading').style.display = 'block';
+  document.getElementById('modal-fields').style.display = 'none';
+  document.getElementById('btn-confirmar-reserva').disabled = true;
   document.getElementById('modal-reserva').classList.add('open');
+
+  try {
+    // Busca as paradas da viagem pelo endpoint de paradas
+    const res = await fetch(`${API}/rides/${idViagem}/stops`);
+
+    if (!res.ok) throw new Error();
+
+    const paradas = await res.json();
+
+    const selEmb = document.getElementById('modal-embarque');
+    const selDes = document.getElementById('modal-desembarque');
+
+    const opts = paradas
+      .sort((a, b) => a.ordem_parada - b.ordem_parada)
+      .map(p => `<option value="${p.id_parada}">${p.cidade}</option>`)
+      .join('');
+
+    selEmb.innerHTML = '<option value="">Selecione a cidade de origem</option>' + opts;
+    selDes.innerHTML = '<option value="">Selecione a cidade de destino</option>' + opts;
+
+    document.getElementById('modal-loading').style.display = 'none';
+    document.getElementById('modal-fields').style.display = 'block';
+    document.getElementById('btn-confirmar-reserva').disabled = false;
+
+  } catch {
+    document.getElementById('modal-loading').innerHTML =
+      '<div class="alert alert-error">Não foi possível carregar as paradas desta viagem.</div>';
+  }
 }
 
 function fecharModal() {
@@ -716,10 +757,19 @@ async function confirmarReserva() {
   const id_parada_desembarque = parseInt(document.getElementById('modal-desembarque').value);
   const quantidade_bagagem = parseInt(document.getElementById('modal-bagagem').value) || 0;
 
-  if (!id_parada_embarque || !id_parada_desembarque) {
-    showMsg('msg-modal', 'Informe os pontos de embarque e desembarque.', 'error');
-    return;
+  if (!id_parada_embarque) {
+    showMsg('msg-modal', 'Selecione a cidade de embarque.', 'error'); return;
   }
+  if (!id_parada_desembarque) {
+    showMsg('msg-modal', 'Selecione a cidade de desembarque.', 'error'); return;
+  }
+  if (id_parada_embarque === id_parada_desembarque) {
+    showMsg('msg-modal', 'Embarque e desembarque não podem ser a mesma cidade.', 'error'); return;
+  }
+
+  const btn = document.getElementById('btn-confirmar-reserva');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading"></span>Enviando...';
 
   try {
     const res = await fetch(`${API}/reservations/`, {
@@ -729,13 +779,16 @@ async function confirmarReserva() {
     });
     if (res.ok) {
       fecharModal();
-      showMsg('lista-caronas', 'Solicitação enviada! Aguarde a confirmação do motorista.', 'success');
+      showMsg('lista-caronas', 'Solicitação enviada com sucesso! Aguarde a confirmação do motorista.', 'success');
     } else {
       const err = await res.json();
-      showMsg('msg-modal', err.detail || 'Erro ao solicitar.', 'error');
+      showMsg('msg-modal', err.detail || 'Erro ao solicitar carona.', 'error');
     }
   } catch {
-    showMsg('msg-modal', 'Erro de conexão.', 'error');
+    showMsg('msg-modal', 'Erro de conexão. Tente novamente.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Confirmar solicitação';
   }
 }
 
