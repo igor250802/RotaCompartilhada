@@ -1,235 +1,1039 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rota 99 - Painel de Controle</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        :root { --chumbo-dark: #1a1a1a; --chumbo-med: #2c3e50; --bg: #f8f9fa; --white: #ffffff; }
-        body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg); display: flex; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rota Compartilhada — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #1e2328;
+    --verde-mid: #2c3440;
+    --verde-light: #eaecef;
+    --verde-accent: #6b7785;
+    --areia: #f2f3f5;
+    --areia-dark: #dde0e4;
+    --text: #1a1c1f;
+    --text-muted: #636b74;
+    --white: #ffffff;
+    --danger: #c0392b;
+    --danger-light: #fdf0ef;
+    --warning: #b7600a;
+    --warning-light: #fef6ec;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --sidebar-w: 240px;
+  }
 
-        /* Sidebar */
-        .sidebar { width: 280px; height: 100vh; background: var(--chumbo-dark); color: white; position: fixed; padding: 30px 20px; display: flex; flex-direction: column; }
-        .brand { font-size: 1.5rem; font-weight: 600; margin-bottom: 40px; color: #fff; }
-        .nav-item { display: flex; align-items: center; padding: 15px; margin-bottom: 8px; color: #bdc3c7; text-decoration: none; border-radius: 12px; cursor: pointer; transition: 0.2s; }
-        .nav-item i { margin-right: 15px; }
-        .nav-item:hover, .nav-item.active { background: var(--chumbo-med); color: white; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Main Content */
-        .content { margin-left: 280px; padding: 50px; width: calc(100% - 280px); }
-        .section { display: none; }
-        .section.active { display: block; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--areia);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+    font-size: 14px;
+  }
 
-        /* Cards e Formulários */
-        .card-99 { background: var(--white); border-radius: 16px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .ride-card-horizontal {
-            background: var(--white); border-radius: 12px; padding: 15px; margin-bottom: 12px;
-            display: grid; grid-template-columns: 50px 1fr 120px 150px;
-            align-items: center; border: 1px solid #eee;
-        }
-        
-        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-        .btn-99 { background: var(--chumbo-dark); color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%; }
-        .btn-99-outline { background: transparent; border: 2px solid var(--chumbo-dark); color: var(--chumbo-dark); padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600; }
-        .btn-99:hover { background: #444; }
-        .badge-status { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-align: center; }
-    </style>
+  /* ═══ SIDEBAR ═══ */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    background: var(--verde);
+    display: flex;
+    flex-direction: column;
+    padding: 28px 16px;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 8px;
+    margin-bottom: 32px;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+    background: rgba(255,255,255,.15);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .brand-name {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    color: var(--white);
+    font-weight: 300;
+    line-height: 1.2;
+  }
+
+  nav { flex: 1; }
+
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .1em;
+    color: rgba(255,255,255,.4);
+    padding: 0 12px;
+    margin: 16px 0 6px;
+    text-transform: uppercase;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: none;
+    background: none;
+    color: rgba(255,255,255,.65);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: all .18s;
+    margin-bottom: 2px;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,.1); color: var(--white); }
+
+  .nav-item.active {
+    background: rgba(255,255,255,.18);
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  .nav-item svg { flex-shrink: 0; opacity: .8; }
+  .nav-item.active svg { opacity: 1; }
+
+  .nav-bottom { border-top: 1px solid rgba(255,255,255,.1); padding-top: 16px; margin-top: 8px; }
+
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.1);
+    margin-bottom: 8px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+
+  .user-name { font-size: 13px; color: var(--white); font-weight: 500; }
+  .user-email { font-size: 11px; color: rgba(255,255,255,.55); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
+
+  .btn-logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: none;
+    background: none;
+    color: rgba(255,255,255,.5);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    width: 100%;
+    transition: all .18s;
+  }
+
+  .btn-logout:hover { background: rgba(255,80,80,.15); color: #ff9f9f; }
+
+  /* ═══ MAIN ═══ */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 32px 36px;
+    overflow-y: auto;
+    min-height: 100vh;
+  }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .page-header { margin-bottom: 24px; }
+  .page-title { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 300; color: var(--text); margin-bottom: 4px; }
+  .page-sub { font-size: 13px; color: var(--text-muted); }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(0,0,0,.05);
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+
+  /* Métricas */
+  .metric {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 16px 18px;
+    border: 1px solid rgba(0,0,0,.05);
+  }
+
+  .metric-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+  .metric-val { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 300; color: var(--text); }
+  .metric-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Formulários */
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
+
+  input[type=text],
+  input[type=email],
+  input[type=password],
+  input[type=number],
+  input[type=datetime-local],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--areia-dark);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+    -webkit-appearance: none;
+  }
+
+  input:focus, select:focus { border-color: var(--verde-accent); }
+
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b60' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+
+  /* Botões */
+  .btn {
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--areia-dark);
+    background: var(--white);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .18s;
+    white-space: nowrap;
+  }
+
+  .btn:hover { background: var(--areia); }
+
+  .btn-primary { background: var(--verde); color: var(--white); border-color: var(--verde); }
+  .btn-primary:hover { background: var(--verde-mid); border-color: var(--verde-mid); }
+
+  .btn-sm { padding: 6px 14px; font-size: 12px; }
+
+  .btn-accept { background: #eaecef; color: #1e2328; border-color: #c4c9cf; }
+  .btn-accept:hover { background: #dde0e4; }
+
+  .btn-reject { background: var(--danger-light); color: var(--danger); border-color: #f5c6c2; }
+  .btn-reject:hover { background: #fae0de; }
+
+  .btn-danger { background: none; color: var(--danger); border-color: #f5c6c2; }
+  .btn-danger:hover { background: var(--danger-light); }
+
+  .btn-block { width: 100%; }
+
+  /* Ride Cards */
+  .ride-card {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: grid;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid rgba(0,0,0,.06);
+    transition: border-color .18s;
+  }
+
+  .ride-card:hover { border-color: var(--verde-accent); }
+
+  .ride-card-search { grid-template-columns: 40px 1fr auto auto; }
+  .ride-card-history { grid-template-columns: 40px 1fr auto auto; }
+  .ride-card-reserva { grid-template-columns: 40px 1fr auto auto; }
+  .ride-card-sol { grid-template-columns: 40px 1fr 80px 80px auto; }
+
+  .ride-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--verde-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ride-route { font-size: 13px; font-weight: 500; color: var(--text); }
+  .ride-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .badge-open { background: #eaecef; color: #1e2328; }
+  .badge-pending { background: var(--warning-light); color: var(--warning); }
+  .badge-accepted { background: #e6f1fb; color: #185fa5; }
+  .badge-refused { background: var(--danger-light); color: var(--danger); }
+  .badge-done { background: #eaecef; color: #636b74; }
+  .badge-cancelled { background: #eaecef; color: var(--danger); }
+  .badge-running { background: #2c3440; color: #eaecef; }
+  .badge-vagas { background: var(--verde-light); color: var(--verde); font-size: 12px; padding: 5px 12px; border-radius: 20px; white-space: nowrap; }
+
+  /* Tabela */
+  .table-wrap { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 8px 12px; color: var(--text-muted); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--areia-dark); }
+  td { padding: 11px 12px; border-bottom: 1px solid rgba(0,0,0,.04); color: var(--text); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+
+  /* Barra de busca */
+  .search-bar { display: flex; gap: 10px; margin-bottom: 16px; }
+  .search-bar input { flex: 1; }
+
+  /* Itinerário visual */
+  .itinerary { padding: 8px 0; }
+  .it-item { display: flex; align-items: flex-start; gap: 10px; position: relative; padding-bottom: 6px; }
+  .it-item:last-child { padding-bottom: 0; }
+
+  .it-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #6b7785;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .it-dot.dest { background: #1e2328; }
+
+  .it-line {
+    position: absolute;
+    left: 4px;
+    top: 14px;
+    width: 2px;
+    height: calc(100% - 6px);
+    background: var(--areia-dark);
+  }
+
+  .it-item:last-child .it-line { display: none; }
+  .it-city { font-size: 13px; color: var(--text); }
+  .it-order { font-size: 11px; color: var(--text-muted); }
+
+  #paradas-lista .it-item { margin-bottom: 4px; }
+
+  /* Alertas */
+  .alert { padding: 11px 15px; border-radius: var(--radius-sm); font-size: 13px; margin-bottom: 14px; }
+  .alert-info { background: #e6f1fb; color: #185fa5; border-left: 3px solid #378add; }
+  .alert-error { background: var(--danger-light); color: var(--danger); border-left: 3px solid #e74c3c; }
+  .alert-success { background: var(--verde-light); color: var(--verde); border-left: 3px solid var(--verde-accent); }
+
+  /* Loading */
+  .loading { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: var(--white); border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-dark { border-color: rgba(0,0,0,.15); border-top-color: var(--verde); }
+
+  /* Divider */
+  .divider { height: 1px; background: var(--areia-dark); margin: 16px 0; }
+
+  /* Modal de reserva */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+    width: 480px;
+    max-width: 95vw;
+  }
+
+  .modal-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 300; margin-bottom: 18px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 36px 20px; color: var(--text-muted); font-size: 13px; }
+
+  /* Flex utils */
+  .flex { display: flex; }
+  .gap-8 { gap: 8px; }
+  .gap-10 { gap: 10px; }
+  .items-center { align-items: center; }
+  .justify-end { justify-content: flex-end; }
+</style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="brand">Rota 99</div>
-        <nav>
-            <div class="nav-item active" onclick="switchSection('home')"><i class="material-icons">search</i> Buscar Carona</div>
-            <div class="nav-item" onclick="switchSection('oferecer')"><i class="material-icons">add_circle</i> Oferecer Carona</div>
-            <div class="nav-item" onclick="switchSection('veiculos')"><i class="material-icons">directions_car</i> Meus Veículos</div>
-            <div class="nav-item" onclick="switchSection('reservas')"><i class="material-icons">assignment</i> Solicitações</div>
-            <div class="nav-item" onclick="switchSection('historico')"><i class="material-icons">history</i> Histórico</div>
-            <div class="nav-item" onclick="logout()" style="color: #ff7675; margin-top: 50px;"><i class="material-icons">logout</i> Sair</div>
-        </nav>
-    </aside>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+        <path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/>
+      </svg>
+    </div>
+    <span class="brand-name">Rota<br>Compartilhada</span>
+  </div>
 
-    <main class="content">
-        <h1 id="welcome-msg">Bem-vindo!</h1>
+  <nav>
+    <span class="nav-section-label">Passageiro</span>
+    <button class="nav-item active" onclick="switchSection('buscar', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Buscar carona
+    </button>
 
-        <div id="section-home" class="section active">
-            <div class="card-99">
-                <h3>Para onde vamos hoje?</h3>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="input-destino" placeholder="Cidade de destino..." style="margin-bottom:0">
-                    <button class="btn-99" style="width:150px" onclick="buscarCaronas()">Buscar</button>
-                </div>
-            </div>
-            <div id="lista-caronas"></div>
+    <span class="nav-section-label">Motorista</span>
+    <button class="nav-item" onclick="switchSection('oferecer', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Oferecer carona
+    </button>
+    <button class="nav-item" onclick="switchSection('veiculos', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+      Meus veículos
+    </button>
+
+    <span class="nav-section-label">Geral</span>
+    <button class="nav-item" onclick="switchSection('solicitacoes', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+      Solicitações
+    </button>
+    <button class="nav-item" onclick="switchSection('historico', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Histórico
+    </button>
+  </nav>
+
+  <div class="nav-bottom">
+    <div class="user-chip">
+      <div class="avatar" id="avatar-initials">?</div>
+      <div>
+        <div class="user-name" id="sidebar-nome">...</div>
+        <div class="user-email" id="sidebar-email">...</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="logout()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sair
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ── BUSCAR ── -->
+  <div id="s-buscar" class="section active">
+    <div class="page-header">
+      <h1 class="page-title">Buscar carona</h1>
+      <p class="page-sub">Encontre viagens disponíveis para sua cidade de destino</p>
+    </div>
+    <div class="card">
+      <div class="search-bar">
+        <input type="text" id="input-destino" placeholder="Para onde você vai? Ex: Poços de Caldas">
+        <button class="btn btn-primary" onclick="buscarCaronas()">Buscar</button>
+      </div>
+      <div id="lista-caronas"><div class="empty">Digite um destino e clique em buscar.</div></div>
+    </div>
+  </div>
+
+  <!-- ── OFERECER ── -->
+  <div id="s-oferecer" class="section">
+    <div class="page-header">
+      <h1 class="page-title">Oferecer carona</h1>
+      <p class="page-sub">Cadastre sua rota e receba passageiros</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Dados da viagem</div>
+        <div id="msg-oferecer"></div>
+        <div class="field"><label>Veículo</label><select id="sel-veiculo"><option value="">Carregando...</option></select></div>
+        <div class="field"><label>Data e horário de partida</label><input type="datetime-local" id="ride-data"></div>
+        <div class="field"><label>Vagas disponíveis</label><input type="number" id="ride-vagas" placeholder="Ex: 3" min="1" max="8"></div>
+        <button class="btn btn-primary btn-block" onclick="criarViagem()">Publicar viagem</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Itinerário — cidades em ordem</div>
+        <div class="field">
+          <label>Adicionar cidade</label>
+          <div class="flex gap-8">
+            <input type="text" id="input-cidade" placeholder="Ex: Muzambinho">
+            <button class="btn" onclick="adicionarParada()">+ Adicionar</button>
+          </div>
         </div>
+        <div class="itinerary" id="paradas-lista"></div>
+        <div id="paradas-vazia" class="alert alert-info" style="margin-top:8px">Adicione ao menos 2 cidades: origem e destino.</div>
+      </div>
+    </div>
+  </div>
 
-        <div id="section-oferecer" class="section">
-            <div class="card-99">
-                <h3>Oferecer uma Carona</h3>
-                <form id="form-oferecer">
-                    <label>Selecione seu Veículo</label>
-                    <select id="select-veiculos" required></select>
-                    
-                    <label>Data e Hora de Saída</label>
-                    <input type="datetime-local" id="ride-data" required>
-                    
-                    <label>Quantidade de Vagas</label>
-                    <input type="number" id="ride-vagas" min="1" required>
-
-                    <label>Itinerário (Cidades separadas por vírgula)</label>
-                    <input type="text" id="ride-cidades" placeholder="Muzambinho, Guaxupé, Poços de Caldas" required>
-                    
-                    <button type="submit" class="btn-99">Criar Viagem</button>
-                </form>
-            </div>
+  <!-- ── VEÍCULOS ── -->
+  <div id="s-veiculos" class="section">
+    <div class="page-header">
+      <h1 class="page-title">Meus veículos</h1>
+      <p class="page-sub">Cadastre e gerencie os veículos da sua conta</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Cadastrar novo veículo</div>
+        <div id="msg-veiculo"></div>
+        <div class="field"><label>Modelo</label><input type="text" id="v-modelo" placeholder="Ex: Fiat Argo"></div>
+        <div class="field"><label>Placa</label><input type="text" id="v-placa" placeholder="Ex: ABC-1234"></div>
+        <div class="grid-2" style="gap:12px">
+          <div class="field"><label>Ano</label><input type="number" id="v-ano" placeholder="2022"></div>
+          <div class="field"><label>Cor</label><input type="text" id="v-cor" placeholder="Branco"></div>
         </div>
+        <button class="btn btn-primary btn-block" onclick="cadastrarVeiculo()">Salvar veículo</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Veículos cadastrados</div>
+        <div id="lista-veiculos"><div class="empty">Carregando...</div></div>
+      </div>
+    </div>
+  </div>
 
-        <div id="section-veiculos" class="section">
-            <div class="card-99">
-                <h3>Cadastrar Novo Veículo</h3>
-                <form id="form-veiculo">
-                    <input type="text" id="v-modelo" placeholder="Modelo (Ex: Civic)" required>
-                    <input type="text" id="v-placa" placeholder="Placa" required>
-                    <input type="text" id="v-cor" placeholder="Cor">
-                    <input type="number" id="v-ano" placeholder="Ano" required>
-                    <button type="submit" class="btn-99">Salvar Veículo</button>
-                </form>
-            </div>
-            <div class="card-99" id="container-lista-veiculos">
-                <h3>Seus Veículos</h3>
-                <div id="lista-veiculos"></div>
-            </div>
+  <!-- ── SOLICITAÇÕES ── -->
+  <div id="s-solicitacoes" class="section">
+    <div class="page-header">
+      <h1 class="page-title">Solicitações</h1>
+      <p class="page-sub">Gerencie pedidos recebidos e acompanhe suas reservas</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Pedidos recebidos — como motorista</div>
+      <div id="lista-solicitacoes-motorista"><div class="empty">Carregando...</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Minhas reservas — como passageiro</div>
+      <div id="lista-reservas-passageiro"><div class="empty">Carregando...</div></div>
+    </div>
+  </div>
+
+  <!-- ── HISTÓRICO ── -->
+  <div id="s-historico" class="section">
+    <div class="page-header">
+      <h1 class="page-title">Histórico</h1>
+      <p class="page-sub">Todas as viagens que você realizou ou ofereceu</p>
+    </div>
+    <div class="grid-4" id="metricas-historico">
+      <div class="metric"><div class="metric-label">Viagens criadas</div><div class="metric-val" id="m-criadas">—</div><div class="metric-sub">como motorista</div></div>
+      <div class="metric"><div class="metric-label">Reservas feitas</div><div class="metric-val" id="m-reservas">—</div><div class="metric-sub">como passageiro</div></div>
+      <div class="metric"><div class="metric-label">Aceitas</div><div class="metric-val" id="m-aceitas">—</div><div class="metric-sub">das suas reservas</div></div>
+      <div class="metric"><div class="metric-label">Veículos</div><div class="metric-val" id="m-veiculos">—</div><div class="metric-sub">cadastrados</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Viagens criadas como motorista</div>
+      <div id="hist-viagens"><div class="empty">Carregando...</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Reservas feitas como passageiro</div>
+      <div id="hist-reservas"><div class="empty">Carregando...</div></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- MODAL SOLICITAR RESERVA -->
+<div class="modal-overlay" id="modal-reserva">
+  <div class="modal">
+    <div class="modal-title">Solicitar carona</div>
+    <div id="msg-modal"></div>
+    <input type="hidden" id="modal-id-viagem">
+    <div class="field">
+      <label>Ponto de embarque (ID da parada)</label>
+      <input type="number" id="modal-embarque" placeholder="ID da parada de origem">
+    </div>
+    <div class="field">
+      <label>Ponto de desembarque (ID da parada)</label>
+      <input type="number" id="modal-desembarque" placeholder="ID da parada de destino">
+    </div>
+    <div class="field">
+      <label>Quantidade de bagagens</label>
+      <input type="number" id="modal-bagagem" value="0" min="0" max="5">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarReserva()">Confirmar solicitação</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "http://localhost:8000";
+let usuario = null;
+let paradasTemp = [];
+
+/* ═══ INIT ═══ */
+(function init() {
+  const data = localStorage.getItem('usuario');
+  if (!data) { window.location.href = 'index.html'; return; }
+  usuario = JSON.parse(data);
+
+  const initials = usuario.nome ? usuario.nome.split(' ').slice(0,2).map(n => n[0]).join('').toUpperCase() : '?';
+  document.getElementById('avatar-initials').textContent = initials;
+  document.getElementById('sidebar-nome').textContent = usuario.nome || '';
+  document.getElementById('sidebar-email').textContent = usuario.email || '';
+})();
+
+/* ═══ NAV ═══ */
+function switchSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+
+  if (id === 'oferecer') carregarVeiculosSelect();
+  if (id === 'veiculos') listarVeiculos();
+  if (id === 'solicitacoes') { listarSolicitacoesMotorista(); listarReservasPassageiro(); }
+  if (id === 'historico') carregarHistorico();
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = 'index.html';
+}
+
+/* ═══ HELPERS ═══ */
+function badgeStatus(status) {
+  const map = {
+    'Aberta': 'badge-open', 'Em Curso': 'badge-running',
+    'Finalizada': 'badge-done', 'Cancelada': 'badge-cancelled',
+    'Pendente': 'badge-pending', 'Aceita': 'badge-accepted', 'Recusada': 'badge-refused'
+  };
+  return `<span class="badge ${map[status] || 'badge-done'}">${status}</span>`;
+}
+
+function fmtDate(d) {
+  return new Date(d).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function showMsg(id, text, tipo) {
+  document.getElementById(id).innerHTML = `<div class="alert alert-${tipo}">${text}</div>`;
+}
+
+/* ═══ BUSCAR CARONAS ═══ */
+async function buscarCaronas() {
+  const destino = document.getElementById('input-destino').value.trim();
+  if (!destino) return;
+  const container = document.getElementById('lista-caronas');
+  container.innerHTML = '<div class="empty"><span class="loading loading-dark"></span> Buscando...</div>';
+
+  try {
+    const res = await fetch(`${API}/rides/search/${encodeURIComponent(destino)}`);
+    const data = await res.json();
+    if (!data.length) { container.innerHTML = '<div class="empty">Nenhuma carona disponível para esse destino.</div>'; return; }
+
+    container.innerHTML = data.map(r => `
+      <div class="ride-card ride-card-search">
+        <div class="ride-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e2328" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
-
-        <div id="section-reservas" class="section">
-            <div class="card-99">
-                <h3>Minhas Reservas Solicitadas</h3>
-                <div id="lista-reservas"></div>
-            </div>
+        <div>
+          <div class="ride-route">Destino: ${destino}</div>
+          <div class="ride-meta">${fmtDate(r.data_hora)} · Viagem #${r.id_viagem}</div>
         </div>
+        <span class="badge-vagas">${r.vagas_totais} vaga${r.vagas_totais !== 1 ? 's' : ''}</span>
+        <button class="btn btn-sm btn-primary" onclick="abrirModal(${r.id_viagem})">Solicitar</button>
+      </div>
+    `).join('');
+  } catch {
+    container.innerHTML = '<div class="empty">Erro ao buscar caronas.</div>';
+  }
+}
 
-        <div id="section-historico" class="section">
-            <div class="card-99">
-                <h3>Minhas Viagens como Motorista</h3>
-                <div id="lista-viagens-motorista"></div>
-            </div>
+/* ═══ MODAL RESERVA ═══ */
+function abrirModal(idViagem) {
+  document.getElementById('modal-id-viagem').value = idViagem;
+  document.getElementById('msg-modal').innerHTML = '';
+  document.getElementById('modal-embarque').value = '';
+  document.getElementById('modal-desembarque').value = '';
+  document.getElementById('modal-bagagem').value = '0';
+  document.getElementById('modal-reserva').classList.add('open');
+}
+
+function fecharModal() {
+  document.getElementById('modal-reserva').classList.remove('open');
+}
+
+async function confirmarReserva() {
+  const id_viagem = parseInt(document.getElementById('modal-id-viagem').value);
+  const id_parada_embarque = parseInt(document.getElementById('modal-embarque').value);
+  const id_parada_desembarque = parseInt(document.getElementById('modal-desembarque').value);
+  const quantidade_bagagem = parseInt(document.getElementById('modal-bagagem').value) || 0;
+
+  if (!id_parada_embarque || !id_parada_desembarque) {
+    showMsg('msg-modal', 'Informe os pontos de embarque e desembarque.', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/reservations/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_viagem, id_passageiro: usuario.id_usuario, id_parada_embarque, id_parada_desembarque, quantidade_bagagem })
+    });
+    if (res.ok) {
+      fecharModal();
+      showMsg('lista-caronas', 'Solicitação enviada! Aguarde a confirmação do motorista.', 'success');
+    } else {
+      const err = await res.json();
+      showMsg('msg-modal', err.detail || 'Erro ao solicitar.', 'error');
+    }
+  } catch {
+    showMsg('msg-modal', 'Erro de conexão.', 'error');
+  }
+}
+
+/* ═══ OFERECER CARONA ═══ */
+async function carregarVeiculosSelect() {
+  const sel = document.getElementById('sel-veiculo');
+  try {
+    const res = await fetch(`${API}/vehicles/user/${usuario.id_usuario}`);
+    const data = await res.json();
+    if (!data.length) {
+      sel.innerHTML = '<option value="">Cadastre um veículo primeiro</option>';
+    } else {
+      sel.innerHTML = data.map(v => `<option value="${v.id_veiculo}">${v.modelo} — ${v.placa}</option>`).join('');
+    }
+  } catch {
+    sel.innerHTML = '<option value="">Erro ao carregar</option>';
+  }
+}
+
+function adicionarParada() {
+  const input = document.getElementById('input-cidade');
+  const cidade = input.value.trim();
+  if (!cidade) return;
+  paradasTemp.push(cidade);
+  input.value = '';
+  renderParadas();
+}
+
+function removerParada(idx) {
+  paradasTemp.splice(idx, 1);
+  renderParadas();
+}
+
+function renderParadas() {
+  const el = document.getElementById('paradas-lista');
+  const aviso = document.getElementById('paradas-vazia');
+  if (!paradasTemp.length) {
+    el.innerHTML = '';
+    aviso.style.display = 'block';
+    return;
+  }
+  aviso.style.display = 'none';
+  el.innerHTML = paradasTemp.map((c, i) => `
+    <div class="it-item">
+      <div class="it-dot ${i === paradasTemp.length - 1 ? 'dest' : ''}"></div>
+      <div class="it-line"></div>
+      <div style="flex:1">
+        <div class="it-city">${c}</div>
+        <div class="it-order">${i === 0 ? 'Origem' : i === paradasTemp.length - 1 ? 'Destino' : `Parada ${i}`}</div>
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="removerParada(${i})">Remover</button>
+    </div>
+  `).join('');
+}
+
+async function criarViagem() {
+  const id_veiculo = parseInt(document.getElementById('sel-veiculo').value);
+  const data_hora = document.getElementById('ride-data').value;
+  const vagas_totais = parseInt(document.getElementById('ride-vagas').value);
+
+  if (!id_veiculo || !data_hora || !vagas_totais) {
+    showMsg('msg-oferecer', 'Preencha todos os campos.', 'error'); return;
+  }
+  if (paradasTemp.length < 2) {
+    showMsg('msg-oferecer', 'Adicione ao menos 2 cidades ao itinerário.', 'error'); return;
+  }
+
+  const itinerario = paradasTemp.map((cidade, i) => ({ cidade, ordem_parada: i + 1 }));
+
+  try {
+    const res = await fetch(`${API}/rides/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_motorista: usuario.id_usuario, id_veiculo, data_hora, vagas_totais, itinerario })
+    });
+    if (res.ok) {
+      showMsg('msg-oferecer', 'Viagem publicada com sucesso!', 'success');
+      paradasTemp = [];
+      renderParadas();
+      document.getElementById('ride-data').value = '';
+      document.getElementById('ride-vagas').value = '';
+    } else {
+      const err = await res.json();
+      showMsg('msg-oferecer', err.detail || 'Erro ao publicar viagem.', 'error');
+    }
+  } catch {
+    showMsg('msg-oferecer', 'Erro de conexão.', 'error');
+  }
+}
+
+/* ═══ VEÍCULOS ═══ */
+async function listarVeiculos() {
+  const container = document.getElementById('lista-veiculos');
+  container.innerHTML = '<div class="empty">Carregando...</div>';
+  try {
+    const res = await fetch(`${API}/vehicles/user/${usuario.id_usuario}`);
+    const data = await res.json();
+    if (!data.length) { container.innerHTML = '<div class="empty">Nenhum veículo cadastrado.</div>'; return; }
+    container.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Modelo</th><th>Placa</th><th>Ano</th><th>Cor</th><th></th></tr></thead>
+          <tbody>
+            ${data.map(v => `
+              <tr>
+                <td>${v.modelo}</td>
+                <td>${v.placa}</td>
+                <td>${v.ano}</td>
+                <td>${v.cor || '—'}</td>
+                <td><button class="btn btn-sm btn-danger" onclick="excluirVeiculo(${v.id_veiculo})">Remover</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  } catch {
+    container.innerHTML = '<div class="empty">Erro ao carregar veículos.</div>';
+  }
+}
+
+async function cadastrarVeiculo() {
+  const modelo = document.getElementById('v-modelo').value.trim();
+  const placa = document.getElementById('v-placa').value.trim();
+  const ano = parseInt(document.getElementById('v-ano').value);
+  const cor = document.getElementById('v-cor').value.trim();
+
+  if (!modelo || !placa || !ano) { showMsg('msg-veiculo', 'Preencha modelo, placa e ano.', 'error'); return; }
+
+  try {
+    const res = await fetch(`${API}/vehicles/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ modelo, placa, ano, cor: cor || null, id_proprietario: usuario.id_usuario })
+    });
+    if (res.ok) {
+      showMsg('msg-veiculo', 'Veículo cadastrado com sucesso!', 'success');
+      document.getElementById('v-modelo').value = '';
+      document.getElementById('v-placa').value = '';
+      document.getElementById('v-ano').value = '';
+      document.getElementById('v-cor').value = '';
+      listarVeiculos();
+    } else {
+      const err = await res.json();
+      showMsg('msg-veiculo', err.detail || 'Erro ao cadastrar.', 'error');
+    }
+  } catch {
+    showMsg('msg-veiculo', 'Erro de conexão.', 'error');
+  }
+}
+
+async function excluirVeiculo(id) {
+  if (!confirm('Remover este veículo?')) return;
+  try {
+    const res = await fetch(`${API}/vehicles/${id}`, { method: 'DELETE' });
+    if (res.ok) listarVeiculos();
+  } catch { alert('Erro ao remover veículo.'); }
+}
+
+/* ═══ SOLICITAÇÕES ═══ */
+async function listarSolicitacoesMotorista() {
+  const container = document.getElementById('lista-solicitacoes-motorista');
+  container.innerHTML = '<div class="empty">Carregando...</div>';
+  try {
+    const res = await fetch(`${API}/history/driver/${usuario.id_usuario}`);
+    const viagens = await res.json();
+
+    let html = '';
+    for (const v of viagens) {
+      try {
+        const r2 = await fetch(`${API}/reservations/driver/${usuario.id_usuario}`);
+        const reservas = await r2.json();
+        const pendentes = reservas.filter(r => r.id_viagem === v.id_viagem && r.status_solicitacao === 'Pendente');
+        for (const r of pendentes) {
+          html += `
+            <div class="ride-card ride-card-sol">
+              <div class="ride-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e2328" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div>
+                <div class="ride-route">Passageiro ID: ${r.id_passageiro}</div>
+                <div class="ride-meta">Viagem #${r.id_viagem} · ${r.quantidade_bagagem} bagagem(s)</div>
+              </div>
+              ${badgeStatus(r.status_solicitacao)}
+              <div>${badgeStatus(v.status_viagem)}</div>
+              <div class="flex gap-8">
+                <button class="btn btn-sm btn-accept" onclick="decidirReserva(${r.id_reserva},'Aceita')">Aceitar</button>
+                <button class="btn btn-sm btn-reject" onclick="decidirReserva(${r.id_reserva},'Recusada')">Recusar</button>
+              </div>
+            </div>`;
+        }
+      } catch {}
+    }
+    container.innerHTML = html || '<div class="empty">Nenhuma solicitação pendente.</div>';
+  } catch {
+    container.innerHTML = '<div class="empty">Erro ao carregar solicitações.</div>';
+  }
+}
+
+async function decidirReserva(id, status) {
+  try {
+    const res = await fetch(`${API}/reservations/${id}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status_solicitacao: status })
+    });
+    if (res.ok) listarSolicitacoesMotorista();
+  } catch { alert('Erro ao atualizar reserva.'); }
+}
+
+async function listarReservasPassageiro() {
+  const container = document.getElementById('lista-reservas-passageiro');
+  container.innerHTML = '<div class="empty">Carregando...</div>';
+  try {
+    const res = await fetch(`${API}/history/passenger/${usuario.id_usuario}`);
+    const data = await res.json();
+    if (!data.length) { container.innerHTML = '<div class="empty">Você ainda não fez nenhuma reserva.</div>'; return; }
+    container.innerHTML = data.map(r => `
+      <div class="ride-card ride-card-reserva">
+        <div class="ride-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e2328" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         </div>
-    </main>
+        <div>
+          <div class="ride-route">Viagem #${r.id_viagem}</div>
+          <div class="ride-meta">${r.quantidade_bagagem} bagagem(s) · Solicitado em ${fmtDate(r.data_solicitacao)}</div>
+        </div>
+        ${badgeStatus(r.status_solicitacao)}
+        <div></div>
+      </div>
+    `).join('');
+  } catch {
+    container.innerHTML = '<div class="empty">Erro ao carregar reservas.</div>';
+  }
+}
 
-    <script>
-        const API_URL = "http://localhost:8000";
-        const usuario = JSON.parse(localStorage.getItem('usuario'));
+/* ═══ HISTÓRICO ═══ */
+async function carregarHistorico() {
+  try {
+    const [rViagens, rReservas, rVeiculos] = await Promise.all([
+      fetch(`${API}/history/driver/${usuario.id_usuario}`),
+      fetch(`${API}/history/passenger/${usuario.id_usuario}`),
+      fetch(`${API}/vehicles/user/${usuario.id_usuario}`)
+    ]);
+    const viagens = await rViagens.json();
+    const reservas = await rReservas.json();
+    const veiculos = await rVeiculos.json();
 
-        if (!usuario) window.location.href = "index.html";
-        else document.getElementById('welcome-msg').innerText = `Olá, ${usuario.nome}!`;
+    document.getElementById('m-criadas').textContent = viagens.length;
+    document.getElementById('m-reservas').textContent = reservas.length;
+    document.getElementById('m-aceitas').textContent = reservas.filter(r => r.status_solicitacao === 'Aceita').length;
+    document.getElementById('m-veiculos').textContent = veiculos.length;
 
-        function switchSection(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('section-' + id).classList.add('active');
-            
-            if(id === 'oferecer') carregarVeiculosNoSelect();
-            if(id === 'veiculos') listarVeiculos();
-            if(id === 'reservas') listarMinhasReservas();
-            if(id === 'historico') listarViagensMotorista();
-        }
+    // Viagens
+    const hvEl = document.getElementById('hist-viagens');
+    hvEl.innerHTML = viagens.length ? `
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Viagem</th><th>Data/hora</th><th>Vagas</th><th>Status</th></tr></thead>
+          <tbody>
+            ${viagens.map(v => `
+              <tr>
+                <td>Viagem #${v.id_viagem}</td>
+                <td>${fmtDate(v.data_hora)}</td>
+                <td>${v.vagas_totais}</td>
+                <td>${badgeStatus(v.status_viagem)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>` : '<div class="empty">Nenhuma viagem criada ainda.</div>';
 
-        // --- MOTORISTA: OFERECER CARONA ---
-        async function carregarVeiculosNoSelect() {
-            const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
-            const data = await res.json();
-            const select = document.getElementById('select-veiculos');
-            select.innerHTML = data.map(v => `<option value="${v.id_veiculo}">${v.modelo} - ${v.placa}</option>`).join('') || '<option disabled>Cadastre um veículo primeiro</option>';
-        }
+    // Reservas
+    const hrEl = document.getElementById('hist-reservas');
+    hrEl.innerHTML = reservas.length ? `
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Viagem</th><th>Bagagens</th><th>Data da solicitação</th><th>Status</th></tr></thead>
+          <tbody>
+            ${reservas.map(r => `
+              <tr>
+                <td>Viagem #${r.id_viagem}</td>
+                <td>${r.quantidade_bagagem}</td>
+                <td>${fmtDate(r.data_solicitacao)}</td>
+                <td>${badgeStatus(r.status_solicitacao)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>` : '<div class="empty">Nenhuma reserva feita ainda.</div>';
 
-        document.getElementById('form-oferecer').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const cidades = document.getElementById('ride-cidades').value.split(',').map((c, i) => ({ cidade: c.trim(), ordem_parada: i + 1 }));
-            
-            const payload = {
-                id_motorista: usuario.id_usuario,
-                id_veiculo: parseInt(document.getElementById('select-veiculos').value),
-                data_hora: document.getElementById('ride-data').value,
-                vagas_totais: parseInt(document.getElementById('ride-vagas').value),
-                itinerario: cidades
-            };
+  } catch {
+    document.getElementById('hist-viagens').innerHTML = '<div class="empty">Erro ao carregar histórico.</div>';
+  }
+}
 
-            const res = await fetch(`${API_URL}/rides/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if(res.ok) { alert("Carona oferecida com sucesso!"); switchSection('historico'); }
-        });
-
-        // --- PASSAGEIRO: BUSCAR E SOLICITAR ---
-        async function buscarCaronas() {
-            const destino = document.getElementById('input-destino').value;
-            const res = await fetch(`${API_URL}/rides/search/${destino}`);
-            const rides = await res.json();
-            document.getElementById('lista-caronas').innerHTML = rides.map(r => `
-                <div class="ride-card-horizontal">
-                    <i class="material-icons" style="color:var(--chumbo-med)">place</i>
-                    <div><strong>Para: ${destino}</strong><br><small>${new Date(r.data_hora).toLocaleString()}</small></div>
-                    <div class="badge-status" style="background:#e3f2fd; color:#1976d2">${r.vagas_totais} vagas</div>
-                    <button class="btn-99" onclick="solicitarVaga(${r.id_viagem})">Solicitar Carona</button>
-                </div>
-            `).join('') || '<p>Nenhuma carona encontrada.</p>';
-        }
-
-        async function solicitarVaga(idViagem) {
-            const res = await fetch(`${API_URL}/reservations/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    id_viagem: idViagem,
-                    id_passageiro: usuario.id_usuario,
-                    id_parada_embarque: 1, id_parada_desembarque: 2, quantidade_bagagem: 1
-                })
-            });
-            if(res.ok) alert("Solicitação enviada ao motorista!");
-        }
-
-        // --- OUTRAS LISTAGENS ---
-        async function listarVeiculos() {
-            const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
-            const data = await res.json();
-            document.getElementById('lista-veiculos').innerHTML = data.map(v => `
-                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
-                    <span><strong>${v.modelo}</strong> (${v.placa})</span>
-                </div>
-            `).join('') || '<p>Sem veículos.</p>';
-        }
-
-        async function listarMinhasReservas() {
-            const res = await fetch(`${API_URL}/history/passenger/${usuario.id_usuario}`);
-            const data = await res.json();
-            document.getElementById('lista-reservas').innerHTML = data.map(r => `
-                <div class="ride-card-horizontal">
-                    <i class="material-icons">label</i>
-                    <div><strong>Reserva #${r.id_reserva}</strong></div>
-                    <div class="badge-status" style="background:#eee">${r.status_solicitacao}</div>
-                    <div style="text-align:right"><small>${new Date(r.data_solicitacao).toLocaleDateString()}</small></div>
-                </div>
-            `).join('') || '<p>Nenhuma reserva.</p>';
-        }
-
-        async function listarViagensMotorista() {
-            const res = await fetch(`${API_URL}/history/driver/${usuario.id_usuario}`);
-            const data = await res.json();
-            document.getElementById('lista-viagens-motorista').innerHTML = data.map(v => `
-                <div class="ride-card-horizontal">
-                    <i class="material-icons">event</i>
-                    <div><strong>Viagem em ${new Date(v.data_hora).toLocaleDateString()}</strong></div>
-                    <div class="badge-status" style="background:#eafaf1; color:#27ae60">${v.status_viagem}</div>
-                    <div>${v.vagas_totais} vagas</div>
-                </div>
-            `).join('') || '<p>Nenhuma viagem criada.</p>';
-        }
-
-        function logout() { localStorage.clear(); window.location.href="index.html"; }
-    </script>
+/* ═══ MODAL OUTSIDE CLICK ═══ */
+document.getElementById('modal-reserva').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
+</script>
 </body>
 </html>

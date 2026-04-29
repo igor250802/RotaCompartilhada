@@ -1,255 +1,607 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rota 99 - Entrar ou Cadastrar</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        :root {
-            --chumbo-dark: #1a1a1a;
-            --chumbo-med: #2c3e50;
-            --bg: #f4f7f6;
-            --white: #ffffff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rota Compartilhada — Sul de Minas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #1e2328;
+    --verde-mid: #2c3440;
+    --verde-light: #eaecef;
+    --verde-accent: #6b7785;
+    --areia: #f2f3f5;
+    --areia-dark: #dde0e4;
+    --text: #1a1c1f;
+    --text-muted: #636b74;
+    --white: #ffffff;
+    --danger: #c0392b;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            margin: 0;
-            display: flex;
-        }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Sidebar similar ao Dashboard */
-        .sidebar {
-            width: 280px;
-            height: 100vh;
-            background-color: var(--chumbo-dark);
-            color: white;
-            position: fixed;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-        }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--areia);
+    min-height: 100vh;
+    display: flex;
+    color: var(--text);
+  }
 
-        .brand { font-size: 1.5rem; font-weight: 600; margin-bottom: 40px; }
+  /* ── LADO ESQUERDO ── */
+  .hero {
+    width: 480px;
+    min-width: 480px;
+    background: var(--verde);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 52px;
+    position: relative;
+    overflow: hidden;
+  }
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            margin-bottom: 8px;
-            color: #bdc3c7;
-            text-decoration: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    border: 80px solid rgba(255,255,255,.05);
+    bottom: -140px;
+    right: -140px;
+  }
 
-        .nav-item i { margin-right: 15px; }
-        .nav-item:hover, .nav-item.active { background-color: var(--chumbo-med); color: white; }
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 40px solid rgba(255,255,255,.06);
+    top: 60px;
+    right: -60px;
+  }
 
-        /* Área de Conteúdo */
-        .main-content {
-            margin-left: 280px;
-            padding: 60px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-        .auth-card {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            width: 100%;
-            max-width: 450px;
-            display: none; /* Escondido por padrão */
-        }
+  .brand-icon {
+    width: 42px;
+    height: 42px;
+    background: rgba(255,255,255,.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-        .auth-card.active { display: block; }
+  .brand-name {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    color: var(--white);
+    letter-spacing: -.3px;
+  }
 
-        h2 { margin-top: 0; color: var(--chumbo-dark); }
-        p { color: #7f8c8d; font-size: 0.9rem; margin-bottom: 25px; }
+  .hero-body { position: relative; z-index: 1; }
 
-        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-sizing: border-box;
-            font-family: inherit;
-        }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(255,255,255,.12);
+    color: rgba(255,255,255,.85);
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: .03em;
+  }
 
-        .btn-99 {
-            width: 100%;
-            padding: 14px;
-            background-color: var(--chumbo-dark);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
+  .hero-title {
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    line-height: 1.15;
+    color: var(--white);
+    font-weight: 300;
+    margin-bottom: 18px;
+  }
 
-        .btn-99:hover { background-color: #333; }
+  .hero-title em {
+    font-style: italic;
+    color: #a8b2bc;
+  }
 
-        /* Estilo para busca pública */
-        .ride-mini-card {
-            border: 1px solid #eee;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            background: #fafafa;
-        }
-    </style>
+  .hero-desc {
+    font-size: 15px;
+    color: rgba(255,255,255,.7);
+    line-height: 1.7;
+    max-width: 340px;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stat {
+    background: rgba(255,255,255,.1);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+  }
+
+  .stat-val {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--white);
+    font-weight: 300;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: rgba(255,255,255,.6);
+    margin-top: 2px;
+  }
+
+  /* ── LADO DIREITO ── */
+  .auth-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 48px 60px;
+    overflow-y: auto;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--areia-dark);
+    border-radius: 12px;
+    padding: 4px;
+    width: fit-content;
+    margin-bottom: 36px;
+  }
+
+  .tab {
+    padding: 9px 22px;
+    border-radius: 9px;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .tab.active {
+    background: var(--white);
+    color: var(--text);
+    font-weight: 500;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  }
+
+  .auth-panel { display: none; }
+  .auth-panel.active { display: block; }
+
+  .panel-title {
+    font-family: 'Fraunces', serif;
+    font-size: 30px;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .panel-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  .field { margin-bottom: 18px; }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 7px;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--areia-dark);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    transition: border-color .2s;
+    outline: none;
+  }
+
+  .field input:focus { border-color: var(--verde-accent); }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .btn-main {
+    width: 100%;
+    padding: 14px;
+    background: var(--verde);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .2s, transform .1s;
+    margin-top: 6px;
+  }
+
+  .btn-main:hover { background: var(--verde-mid); }
+  .btn-main:active { transform: scale(.99); }
+
+  .msg { font-size: 13px; text-align: center; margin-top: 14px; }
+  .msg a { color: var(--verde-mid); cursor: pointer; text-decoration: underline; }
+
+  /* Explorar */
+  .search-wrap {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .search-wrap input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1.5px solid var(--areia-dark);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .search-wrap input:focus { border-color: var(--verde-accent); }
+
+  .btn-search {
+    padding: 12px 22px;
+    background: var(--verde);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .2s;
+  }
+
+  .btn-search:hover { background: var(--verde-mid); }
+
+  .ride-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1.5px solid transparent;
+    transition: border-color .2s;
+    cursor: pointer;
+  }
+
+  .ride-card:hover { border-color: var(--verde-accent); }
+
+  .ride-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--verde-light);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ride-info { flex: 1; }
+  .ride-route { font-size: 14px; font-weight: 500; color: var(--text); }
+  .ride-meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+
+  .badge-vagas {
+    background: var(--verde-light);
+    color: var(--verde);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .btn-login-cta {
+    font-size: 12px;
+    color: var(--verde-mid);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  .alert {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .alert-error { background: #fdf0ef; color: var(--danger); border: 1px solid #f5c6c2; }
+  .alert-success { background: var(--verde-light); color: var(--verde); border: 1px solid #b8deca; }
+
+  .loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,.4);
+    border-top-color: var(--white);
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 860px) {
+    body { flex-direction: column; }
+    .hero { width: 100%; min-width: unset; padding: 32px 28px; }
+    .hero-title { font-size: 32px; }
+    .auth-area { padding: 32px 28px; }
+  }
+</style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="brand">Rota 99</div>
-        <nav>
-            <div class="nav-item active" id="btn-login" onclick="switchTab('login')">
-                <i class="material-icons">login</i> Entrar
-            </div>
-            <div class="nav-item" id="btn-cadastro" onclick="switchTab('cadastro')">
-                <i class="material-icons">person_add</i> Criar Conta
-            </div>
-            <div class="nav-item" id="btn-explorar" onclick="switchTab('explorar')">
-                <i class="material-icons">search</i> Ver Caronas
-            </div>
-        </nav>
-    </aside>
+<section class="hero">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8">
+        <path d="M3 12h18M3 12l4-4M3 12l4 4M21 12l-4-4M21 12l-4 4"/>
+      </svg>
+    </div>
+    <span class="brand-name">Rota Compartilhada</span>
+  </div>
 
-    <main class="main-content">
-        <div id="section-login" class="auth-card active">
-            <h2>Bem-vindo de volta</h2>
-            <p>Acesse sua conta para reservar sua próxima carona.</p>
-            <form id="formLogin">
-                <label>E-mail</label>
-                <input type="email" id="login-email" placeholder="exemplo@email.com" required>
-                <label>Senha</label>
-                <input type="password" id="login-senha" placeholder="••••••••" required>
-                <button type="submit" class="btn-99">Entrar</button>
-            </form>
+  <div class="hero-body">
+    <span class="hero-tag">Sul de Minas Gerais</span>
+    <h1 class="hero-title">Viaje junto,<br>gaste <em>menos</em>.</h1>
+    <p class="hero-desc">
+      Conectamos motoristas e passageiros nas rotas do sul de Minas. Economize, conheça pessoas e contribua para um trânsito mais inteligente.
+    </p>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-val">Sul MG</div>
+      <div class="stat-label">Região atendida</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">100%</div>
+      <div class="stat-label">Gratuito</div>
+    </div>
+  </div>
+</section>
+
+<section class="auth-area">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('login')">Entrar</button>
+    <button class="tab" onclick="switchTab('cadastro')">Criar conta</button>
+    <button class="tab" onclick="switchTab('explorar')">Ver caronas</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="panel-login" class="auth-panel active">
+    <h2 class="panel-title">Bem-vindo de volta</h2>
+    <p class="panel-sub">Acesse sua conta para reservar ou oferecer caronas.</p>
+    <div id="msg-login"></div>
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="login-email" placeholder="seu@email.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-main" id="btn-login" onclick="fazerLogin()">Entrar</button>
+    <p class="msg">Não tem conta? <a onclick="switchTab('cadastro')">Cadastre-se aqui</a></p>
+  </div>
+
+  <!-- CADASTRO -->
+  <div id="panel-cadastro" class="auth-panel">
+    <h2 class="panel-title">Criar nova conta</h2>
+    <p class="panel-sub">Junte-se à rede de caronas do sul de Minas.</p>
+    <div id="msg-cadastro"></div>
+    <div class="field">
+      <label>Nome completo</label>
+      <input type="text" id="cad-nome" placeholder="Seu nome">
+    </div>
+    <div class="row-2">
+      <div class="field">
+        <label>E-mail</label>
+        <input type="email" id="cad-email" placeholder="seu@email.com">
+      </div>
+      <div class="field">
+        <label>Telefone</label>
+        <input type="text" id="cad-tel" placeholder="(35) 99999-9999">
+      </div>
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres">
+    </div>
+    <button class="btn-main" id="btn-cadastro" onclick="fazerCadastro()">Criar conta</button>
+    <p class="msg">Já tem conta? <a onclick="switchTab('login')">Entrar</a></p>
+  </div>
+
+  <!-- EXPLORAR -->
+  <div id="panel-explorar" class="auth-panel">
+    <h2 class="panel-title">Explorar caronas</h2>
+    <p class="panel-sub">Veja as viagens disponíveis sem precisar de conta.</p>
+    <div class="search-wrap">
+      <input type="text" id="busca-publica" placeholder="Para onde você vai? Ex: Poços de Caldas">
+      <button class="btn-search" onclick="pesquisarPublico()">Buscar</button>
+    </div>
+    <div id="lista-publica">
+      <div class="empty-state">Digite uma cidade de destino para buscar caronas disponíveis.</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const API_URL = "http://localhost:8000";
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach((t, i) => {
+      const ids = ['login','cadastro','explorar'];
+      t.classList.toggle('active', ids[i] === tab);
+    });
+    document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
+
+  function showMsg(id, text, tipo) {
+    const el = document.getElementById(id);
+    el.innerHTML = `<div class="alert alert-${tipo}">${text}</div>`;
+  }
+
+  async function fazerLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const senha = document.getElementById('login-senha').value;
+    if (!email || !senha) { showMsg('msg-login', 'Preencha e-mail e senha.', 'error'); return; }
+
+    const btn = document.getElementById('btn-login');
+    btn.innerHTML = '<span class="loading"></span>Entrando...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`${API_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('usuario', JSON.stringify(data));
+        window.location.href = 'dashboard.html';
+      } else {
+        showMsg('msg-login', 'E-mail ou senha incorretos.', 'error');
+        btn.innerHTML = 'Entrar';
+        btn.disabled = false;
+      }
+    } catch {
+      showMsg('msg-login', 'Não foi possível conectar ao servidor.', 'error');
+      btn.innerHTML = 'Entrar';
+      btn.disabled = false;
+    }
+  }
+
+  async function fazerCadastro() {
+    const nome = document.getElementById('cad-nome').value.trim();
+    const email = document.getElementById('cad-email').value.trim();
+    const telefone = document.getElementById('cad-tel').value.trim();
+    const senha = document.getElementById('cad-senha').value;
+
+    if (!nome || !email || !senha) { showMsg('msg-cadastro', 'Preencha todos os campos obrigatórios.', 'error'); return; }
+    if (senha.length < 6) { showMsg('msg-cadastro', 'A senha deve ter pelo menos 6 caracteres.', 'error'); return; }
+
+    const btn = document.getElementById('btn-cadastro');
+    btn.innerHTML = '<span class="loading"></span>Cadastrando...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`${API_URL}/users/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, telefone, senha })
+      });
+      if (res.ok) {
+        showMsg('msg-cadastro', 'Conta criada com sucesso! Faça seu login.', 'success');
+        setTimeout(() => switchTab('login'), 1500);
+      } else {
+        const err = await res.json();
+        showMsg('msg-cadastro', err.detail || 'Erro ao cadastrar. Tente novamente.', 'error');
+      }
+    } catch {
+      showMsg('msg-cadastro', 'Não foi possível conectar ao servidor.', 'error');
+    } finally {
+      btn.innerHTML = 'Criar conta';
+      btn.disabled = false;
+    }
+  }
+
+  async function pesquisarPublico() {
+    const destino = document.getElementById('busca-publica').value.trim();
+    const container = document.getElementById('lista-publica');
+    if (!destino) { container.innerHTML = '<div class="empty-state">Digite uma cidade de destino.</div>'; return; }
+
+    container.innerHTML = '<div class="empty-state">Buscando...</div>';
+
+    try {
+      const res = await fetch(`${API_URL}/rides/search/${encodeURIComponent(destino)}`);
+      const caronas = await res.json();
+
+      if (!caronas.length) {
+        container.innerHTML = '<div class="empty-state">Nenhuma carona encontrada para esse destino.</div>';
+        return;
+      }
+
+      container.innerHTML = caronas.map(c => `
+        <div class="ride-card">
+          <div class="ride-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1e2328" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <div class="ride-info">
+            <div class="ride-route">Destino: ${destino}</div>
+            <div class="ride-meta">${new Date(c.data_hora).toLocaleString('pt-BR')} · Viagem #${c.id_viagem}</div>
+          </div>
+          <span class="badge-vagas">${c.vagas_totais} vaga${c.vagas_totais !== 1 ? 's' : ''}</span>
+          <span class="btn-login-cta" onclick="switchTab('login')">Entrar para reservar →</span>
         </div>
+      `).join('');
+    } catch {
+      container.innerHTML = '<div class="empty-state">Erro ao buscar caronas.</div>';
+    }
+  }
 
-        <div id="section-cadastro" class="auth-card">
-            <h2>Criar nova conta</h2>
-            <p>Junte-se à maior rede de caronas do Sul de Minas.</p>
-            <form id="formCadastro">
-                <label>Nome Completo</label>
-                <input type="text" id="cad-nome" placeholder="Seu nome" required>
-                <label>E-mail</label>
-                <input type="email" id="cad-email" placeholder="seu@email.com" required>
-                <label>Telefone</label>
-                <input type="text" id="cad-tel" placeholder="(35) 99999-9999">
-                <label>Senha</label>
-                <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" required>
-                <button type="submit" class="btn-99">Cadastrar</button>
-            </form>
-        </div>
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      if (document.getElementById('panel-login').classList.contains('active')) fazerLogin();
+      if (document.getElementById('panel-cadastro').classList.contains('active')) fazerCadastro();
+    }
+  });
 
-        <div id="section-explorar" class="auth-card" style="max-width: 600px;">
-            <h2>Explorar Caronas</h2>
-            <p>Veja as viagens disponíveis agora mesmo.</p>
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <input type="text" id="busca-publica" placeholder="Para onde você vai?" style="margin-bottom:0">
-                <button class="btn-99" style="width:120px" onclick="pesquisarPublico()">Buscar</button>
-            </div>
-            <div id="lista-publica"></div>
-        </div>
-    </main>
-
-    <script>
-        const API_URL = "http://localhost:8000";
-
-        function switchTab(tab) {
-            document.querySelectorAll('.auth-card').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            
-            document.getElementById('section-' + tab).classList.add('active');
-            document.getElementById('btn-' + tab).classList.add('active');
-        }
-
-        // Login integrado com sessionStorage (como no seu original)
-        document.getElementById('formLogin').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const senha = document.getElementById('login-senha').value;
-
-            try {
-                const res = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, senha })
-                });
-
-                if (res.ok) {
-                    const data = await res.json();
-                    // IMPORTANTE: dashboard.html usará esta chave 'usuario'
-                    localStorage.setItem('usuario', JSON.stringify(data));
-                    window.location.href = "dashboard.html";
-                } else {
-                    alert("E-mail ou senha incorretos.");
-                }
-            } catch (err) {
-                alert("Erro ao conectar ao servidor.");
-            }
-        });
-
-        // Cadastro integrado com seu users.py
-        document.getElementById('formCadastro').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const dados = {
-                nome: document.getElementById('cad-nome').value,
-                email: document.getElementById('cad-email').value,
-                telefone: document.getElementById('cad-tel').value,
-                senha: document.getElementById('cad-senha').value
-            };
-
-            const res = await fetch(`${API_URL}/users/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dados)
-            });
-
-            if (res.ok) {
-                alert("Cadastro realizado! Agora faça seu login.");
-                switchTab('login');
-            } else {
-                alert("Erro ao cadastrar usuário.");
-            }
-        });
-
-        // Busca pública de caronas (sem precisar estar logado)
-        async function pesquisarPublico() {
-            const destino = document.getElementById('busca-publica').value;
-            if(!destino) return;
-            const res = await fetch(`${API_URL}/rides/search/${destino}`);
-            const caronas = await res.json();
-            const container = document.getElementById('lista-publica');
-            
-            container.innerHTML = caronas.map(c => `
-                <div class="ride-mini-card">
-                    <div style="display:flex; justify-content:space-between">
-                        <strong>${destino}</strong>
-                        <span style="color:var(--chumbo-med); font-weight:600">${c.vagas_totais} vagas</span>
-                    </div>
-                    <div style="font-size:0.8rem; color:#7f8c8d; margin-top:5px">
-                        ${new Date(c.data_hora).toLocaleString()}
-                    </div>
-                    <div style="margin-top:10px; font-size:0.8rem; color:blue; cursor:pointer" onclick="switchTab('login')">
-                        Faça login para reservar →
-                    </div>
-                </div>
-            `).join('') || '<p>Nenhuma carona encontrada.</p>';
-        }
-    </script>
+  if (localStorage.getItem('usuario')) window.location.href = 'dashboard.html';
+</script>
 </body>
 </html>
