@@ -9,16 +9,20 @@
     <style>
         :root { --sidebar-width: 260px; --primary: #0d6efd; --dark: #212529; }
         body { background-color: #f8f9fa; min-height: 100vh; margin: 0; display: flex; }
+        
         .sidebar { width: var(--sidebar-width); height: 100vh; position: fixed; background: var(--dark); color: white; z-index: 1000; }
         .sidebar-header { padding: 20px; border-bottom: 1px solid #444; text-align: center; }
         .nav-link { color: #adb5bd; padding: 12px 20px; display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
         .nav-link:hover, .nav-link.active { background: #343a40; color: white; }
+        
         .main-content { margin-left: var(--sidebar-width); padding: 40px; width: 100%; }
         .card-custom { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); background: white; }
         .section-content { display: none; }
         .section-content.active { display: block; }
-        .carona-card { border-left: 5px solid var(--primary); background: #fff; transition: 0.3s; }
+        
+        .carona-card { border-left: 5px solid var(--primary); background: #fff; transition: 0.3s; margin-bottom: 15px; }
         .carona-card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+        .status-badge { font-size: 0.8rem; padding: 5px 10px; border-radius: 20px; }
     </style>
 </head>
 <body>
@@ -33,26 +37,28 @@
             <a class="nav-link" onclick="showSection('veiculos', this)"><i class="material-icons">directions_car</i> Meus Veículos</a>
             <a class="nav-link" onclick="showSection('oferecer', this)"><i class="material-icons">add_location</i> Oferecer Carona</a>
             <a class="nav-link" onclick="showSection('procurar', this)"><i class="material-icons">search</i> Procurar Carona</a>
+            <a class="nav-link" onclick="showSection('solicitacoes', this)"><i class="material-icons">notifications</i> Solicitações</a>
             <hr class="mx-3 border-secondary">
             <a class="nav-link text-danger" onclick="logout()"><i class="material-icons">logout</i> Sair</a>
         </nav>
     </div>
 
     <div class="main-content">
+        
         <div id="section-resumo" class="section-content active">
             <h2 id="welcome-msg">Bem-vindo!</h2>
-            <p class="text-muted">Inicie sua jornada hoje.</p>
+            <p class="text-muted">Selecione uma opção no menu para começar.</p>
         </div>
 
         <div id="section-veiculos" class="section-content">
             <div class="card card-custom p-4">
-                <h3>Meus Veículos</h3>
+                <h3>Gerenciar Veículos</h3>
                 <form id="formVeiculo" class="row g-3 mt-2">
                     <div class="col-md-4"><input type="text" id="v-modelo" class="form-control" placeholder="Modelo" required></div>
                     <div class="col-md-3"><input type="text" id="v-placa" class="form-control" placeholder="Placa" required></div>
                     <div class="col-md-3"><input type="text" id="v-cor" class="form-control" placeholder="Cor"></div>
                     <div class="col-md-2"><input type="number" id="v-ano" class="form-control" value="2024"></div>
-                    <div class="col-12"><button type="submit" class="btn btn-success">Adicionar Veículo</button></div>
+                    <div class="col-12"><button type="submit" class="btn btn-success">Cadastrar Veículo</button></div>
                 </form>
                 <div id="lista-veiculos" class="mt-4"></div>
             </div>
@@ -62,15 +68,15 @@
             <div class="card card-custom p-4">
                 <h3>Oferecer Carona</h3>
                 <form id="formViagem" class="row g-3 mt-2">
-                    <div class="col-md-6"><label>Veículo</label><select id="select-veiculos" class="form-select" required></select></div>
-                    <div class="col-md-3"><label>Data/Hora</label><input type="datetime-local" id="viagem-data" class="form-control" required></div>
-                    <div class="col-md-3"><label>Vagas</label><input type="number" id="viagem-vagas" class="form-control" value="4"></div>
+                    <div class="col-md-6"><label class="form-label">Veículo</label><select id="select-veiculos" class="form-select" required></select></div>
+                    <div class="col-md-3"><label class="form-label">Data/Hora</label><input type="datetime-local" id="viagem-data" class="form-control" required></div>
+                    <div class="col-md-3"><label class="form-label">Vagas</label><input type="number" id="viagem-vagas" class="form-control" value="4" min="1"></div>
                     <div class="col-12" id="container-paradas">
-                        <label>Itinerário</label>
-                        <input type="text" class="form-control cidade-input mb-2" placeholder="Origem" required>
-                        <input type="text" class="form-control cidade-input mb-2" placeholder="Destino" required>
+                        <label class="form-label">Itinerário (Origem e Destino)</label>
+                        <input type="text" class="form-control cidade-input mb-2" placeholder="Cidade de Origem" required>
+                        <input type="text" class="form-control cidade-input mb-2" placeholder="Cidade de Destino" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Publicar</button>
+                    <div class="col-12"><button type="submit" class="btn btn-primary w-100">Publicar Carona</button></div>
                 </form>
             </div>
         </div>
@@ -79,12 +85,21 @@
             <div class="card card-custom p-4">
                 <h3>Buscar Caronas</h3>
                 <div class="input-group mb-4">
-                    <input type="text" id="busca-destino" class="form-control" placeholder="Para onde você vai?">
+                    <input type="text" id="busca-destino" class="form-control" placeholder="Para onde você deseja ir?">
                     <button class="btn btn-primary" onclick="pesquisarCaronas()">Buscar</button>
                 </div>
-                <div id="resultados-busca" class="row g-3"></div>
+                <div id="resultados-busca" class="row"></div>
             </div>
         </div>
+
+        <div id="section-solicitacoes" class="section-content">
+            <div class="card card-custom p-4">
+                <h3>Solicitações Recebidas</h3>
+                <p class="text-muted">Aprove ou recuse passageiros para as suas viagens.</p>
+                <div id="lista-solicitacoes" class="mt-3"></div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -100,30 +115,72 @@
             document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
             document.getElementById('section-' + id).classList.add('active');
             if(el) el.classList.add('active');
+
             if(id === 'veiculos') listarVeiculos();
             if(id === 'oferecer') carregarVeiculosNoSelect();
+            if(id === 'solicitacoes') listarSolicitacoes();
+        }
+
+        // --- VEÍCULOS ---
+        async function listarVeiculos() {
+            const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
+            const data = await res.json();
+            const container = document.getElementById('lista-veiculos');
+            container.innerHTML = data.map(v => `
+                <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                    <span><strong>${v.modelo}</strong> (${v.placa})</span>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deletarVeiculo(${v.id_veiculo})">Excluir</button>
+                </div>
+            `).join('') || '<p class="text-muted">Nenhum veículo cadastrado.</p>';
+        }
+
+        document.getElementById('formVeiculo').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const dados = {
+                modelo: document.getElementById('v-modelo').value,
+                placa: document.getElementById('v-placa').value,
+                cor: document.getElementById('v-cor').value,
+                ano: parseInt(document.getElementById('v-ano').value),
+                id_proprietario: usuario.id_usuario
+            };
+            await fetch(`${API_URL}/vehicles/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
+            listarVeiculos();
+        });
+
+        // --- CARONAS ---
+        async function carregarVeiculosNoSelect() {
+            const res = await fetch(`${API_URL}/vehicles/user/${usuario.id_usuario}`);
+            const data = await res.json();
+            document.getElementById('select-veiculos').innerHTML = data.map(v => 
+                `<option value="${v.id_veiculo}">${v.modelo} (${v.placa})</option>`
+            ).join('') || '<option disabled>Cadastre um veículo primeiro</option>';
         }
 
         async function pesquisarCaronas() {
             const destino = document.getElementById('busca-destino').value;
             const res = await fetch(`${API_URL}/rides/search/${destino}`);
             const caronas = await res.json();
-            const container = document.getElementById('resultados-busca');
-            container.innerHTML = caronas.map(c => `
+            document.getElementById('resultados-busca').innerHTML = caronas.map(c => `
                 <div class="col-md-6">
                     <div class="card p-3 carona-card shadow-sm border-0">
-                        <h5>Viagem #${c.id_viagem}</h5>
-                        <p class="mb-1">Data: ${new Date(c.data_hora).toLocaleString()}</p>
-                        <p class="small text-muted">Vagas: ${c.vagas_totais}</p>
-                        <button class="btn btn-sm btn-primary w-100" onclick="solicitarVaga(${c.id_viagem})">Solicitar Vaga</button>
+                        <div class="d-flex justify-content-between">
+                            <h5 class="text-primary">Viagem #${c.id_viagem}</h5>
+                            <span class="badge bg-success">${c.vagas_totais} vagas</span>
+                        </div>
+                        <p class="small mb-1">Data: ${new Date(c.data_hora).toLocaleString()}</p>
+                        <button class="btn btn-sm btn-primary w-100 mt-2" onclick="solicitarVaga(${c.id_viagem})">Solicitar Vaga</button>
                     </div>
                 </div>
-            `).join('') || '<p>Nenhuma carona encontrada.</p>';
+            `).join('') || '<p class="text-center">Nenhuma carona encontrada.</p>';
         }
 
-        // Lógica de Reserva Real (RF06)
+        // --- RESERVAS (RF06 / RF07) ---
         async function solicitarVaga(idViagem) {
-            const dadosReserva = {
+            const dados = {
                 id_viagem: idViagem,
                 id_passageiro: usuario.id_usuario,
                 id_parada_embarque: 1, 
@@ -133,10 +190,37 @@
             const res = await fetch(`${API_URL}/reservations/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dadosReserva)
+                body: JSON.stringify(dados)
             });
-            if(res.ok) alert("Reserva solicitada!");
-            else alert("Erro ao solicitar.");
+            if(res.ok) alert("Reserva solicitada com sucesso!");
+            else alert("Erro ao solicitar vaga.");
+        }
+
+        async function listarSolicitacoes() {
+            const res = await fetch(`${API_URL}/reservations/driver/${usuario.id_usuario}`);
+            const dados = await res.json();
+            document.getElementById('lista-solicitacoes').innerHTML = dados.map(r => `
+                <div class="p-3 border rounded mb-2 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Pedido #${r.id_reserva}</strong> - Viagem #${r.id_viagem}<br>
+                        <span class="badge bg-info text-dark">${r.status_solicitacao}</span>
+                    </div>
+                    ${r.status_solicitacao === 'Pendente' ? `
+                    <div>
+                        <button class="btn btn-sm btn-success" onclick="decidirReserva(${r.id_reserva}, 'Aceita')">Aceitar</button>
+                        <button class="btn btn-sm btn-danger" onclick="decidirReserva(${r.id_reserva}, 'Recusada')">Recusar</button>
+                    </div>` : ''}
+                </div>
+            `).join('') || '<p>Sem solicitações pendentes.</p>';
+        }
+
+        async function decidirReserva(id, status) {
+            await fetch(`${API_URL}/reservations/${id}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status_solicitacao: status })
+            });
+            listarSolicitacoes();
         }
 
         function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
