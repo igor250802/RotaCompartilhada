@@ -26,10 +26,16 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     senha: str
 
-# Adicionado para suportar a rota de login no main.py
 class UserLogin(BaseModel):
     email: EmailStr
     senha: str
+
+# Schema dedicado para atualização de perfil (PUT)
+# Todos os campos são opcionais: o usuário atualiza só o que quiser
+class UserUpdate(BaseModel):
+    nome: Optional[str] = None
+    telefone: Optional[str] = None
+    senha: Optional[str] = None  # Permite trocar a senha
 
 class UserResponse(UserBase):
     id_usuario: int
@@ -73,7 +79,7 @@ class ViagemCreate(BaseModel):
     id_veiculo: int
     data_hora: datetime
     vagas_totais: int
-    itinerario: List[ParadaBase] 
+    itinerario: List[ParadaBase]
 
 class ViagemResponse(BaseModel):
     id_viagem: int
@@ -82,7 +88,7 @@ class ViagemResponse(BaseModel):
     data_hora: datetime
     vagas_totais: int
     status_viagem: ViagemStatus
-    
+
     class Config:
         from_attributes = True
 
@@ -98,7 +104,6 @@ class ReservaCreate(BaseModel):
 class ReservaUpdateStatus(BaseModel):
     status_solicitacao: ReservaStatus
 
-# Corrigido: Adicionada a classe que faltava para o router history.py
 class ReservaResponse(ReservaCreate):
     id_reserva: int
     status_solicitacao: ReservaStatus

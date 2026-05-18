@@ -458,6 +458,10 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       Histórico
     </button>
+    <button class="nav-item" onclick="switchSection('perfil', this)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Meu perfil
+    </button>
   </nav>
 
   <div class="nav-bottom">
@@ -586,6 +590,61 @@
     </div>
   </div>
 
+
+  <!-- ── PERFIL ── -->
+  <div id="s-perfil" class="section">
+    <div class="page-header">
+      <h1 class="page-title">Meu perfil</h1>
+      <p class="page-sub">Visualize e atualize suas informações pessoais</p>
+    </div>
+    <div class="grid-2">
+
+      <!-- Card: Dados atuais -->
+      <div class="card">
+        <div class="card-title">Dados da conta</div>
+        <div id="perfil-info">
+          <div class="empty">Carregando...</div>
+        </div>
+      </div>
+
+      <!-- Card: Editar perfil -->
+      <div class="card">
+        <div class="card-title">Editar informações</div>
+        <div id="msg-perfil"></div>
+        <div class="field">
+          <label>Nome completo</label>
+          <input type="text" id="perfil-nome" placeholder="Seu nome">
+        </div>
+        <div class="field">
+          <label>Telefone</label>
+          <input type="text" id="perfil-tel" placeholder="(35) 99999-9999">
+        </div>
+        <div class="divider"></div>
+        <div class="card-title" style="margin-bottom:12px">Alterar senha</div>
+        <div class="field">
+          <label>Nova senha <span style="color:var(--text-muted);font-weight:400">(deixe em branco para não alterar)</span></label>
+          <input type="password" id="perfil-senha" placeholder="Mínimo 6 caracteres">
+        </div>
+        <div class="field">
+          <label>Confirmar nova senha</label>
+          <input type="password" id="perfil-senha-conf" placeholder="Repita a senha">
+        </div>
+        <button class="btn btn-primary btn-block" onclick="salvarPerfil()">Salvar alterações</button>
+      </div>
+
+    </div>
+
+    <!-- Card: Zona de perigo -->
+    <div class="card" style="border:1px solid #f5c6c2; margin-top:4px">
+      <div class="card-title" style="color:var(--danger)">Zona de perigo</div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px">
+        Ao excluir sua conta, todos os seus dados — viagens, reservas e veículos — serão permanentemente removidos. Esta ação não pode ser desfeita.
+      </p>
+      <div id="msg-excluir"></div>
+      <button class="btn btn-danger" onclick="confirmarExclusao()">Excluir minha conta</button>
+    </div>
+  </div>
+
 </main>
 
 <!-- MODAL SOLICITAR RESERVA -->
@@ -653,6 +712,7 @@ function switchSection(id, el) {
   if (id === 'veiculos') listarVeiculos();
   if (id === 'solicitacoes') { listarSolicitacoesMotorista(); listarReservasPassageiro(); }
   if (id === 'historico') carregarHistorico();
+  if (id === 'perfil') carregarPerfil();
 }
 
 function logout() {
@@ -1080,6 +1140,115 @@ async function carregarHistorico() {
 
   } catch {
     document.getElementById('hist-viagens').innerHTML = '<div class="empty">Erro ao carregar histórico.</div>';
+  }
+}
+
+
+/* ═══ PERFIL ═══ */
+async function carregarPerfil() {
+  const container = document.getElementById('perfil-info');
+  try {
+    const res = await fetch(`${API}/users/${usuario.id_usuario}`);
+    const data = await res.json();
+
+    // Preenche o card de dados atuais
+    container.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Nome</div>
+          <div style="font-size:14px;font-weight:500;color:var(--text)">${data.nome}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">E-mail</div>
+          <div style="font-size:14px;color:var(--text)">${data.email}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Telefone</div>
+          <div style="font-size:14px;color:var(--text)">${data.telefone || '—'}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Membro desde</div>
+          <div style="font-size:14px;color:var(--text)">${new Date(data.data_cadastro).toLocaleDateString('pt-BR')}</div>
+        </div>
+      </div>`;
+
+    // Pré-preenche os campos de edição com os dados atuais
+    document.getElementById('perfil-nome').value = data.nome || '';
+    document.getElementById('perfil-tel').value = data.telefone || '';
+  } catch {
+    container.innerHTML = '<div class="empty">Erro ao carregar dados do perfil.</div>';
+  }
+}
+
+async function salvarPerfil() {
+  const nome  = document.getElementById('perfil-nome').value.trim();
+  const tel   = document.getElementById('perfil-tel').value.trim();
+  const senha = document.getElementById('perfil-senha').value;
+  const conf  = document.getElementById('perfil-senha-conf').value;
+
+  if (!nome) { showMsg('msg-perfil', 'O nome não pode ficar em branco.', 'error'); return; }
+
+  if (senha || conf) {
+    if (senha.length < 6) { showMsg('msg-perfil', 'A senha deve ter ao menos 6 caracteres.', 'error'); return; }
+    if (senha !== conf)   { showMsg('msg-perfil', 'As senhas não coincidem.', 'error'); return; }
+  }
+
+  const payload = { nome, telefone: tel || null };
+  if (senha) payload.senha = senha;
+
+  try {
+    const res = await fetch(`${API}/users/${usuario.id_usuario}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      const atualizado = await res.json();
+
+      // Atualiza localStorage e sidebar com o novo nome
+      usuario.nome = atualizado.nome;
+      usuario.telefone = atualizado.telefone;
+      localStorage.setItem('usuario', JSON.stringify(usuario));
+
+      const initials = atualizado.nome.split(' ').slice(0,2).map(n => n[0]).join('').toUpperCase();
+      document.getElementById('avatar-initials').textContent = initials;
+      document.getElementById('sidebar-nome').textContent = atualizado.nome;
+
+      // Limpa campos de senha
+      document.getElementById('perfil-senha').value = '';
+      document.getElementById('perfil-senha-conf').value = '';
+
+      showMsg('msg-perfil', 'Perfil atualizado com sucesso!', 'success');
+      carregarPerfil(); // Recarrega o card de dados atuais
+    } else {
+      const err = await res.json();
+      showMsg('msg-perfil', err.detail || 'Erro ao atualizar perfil.', 'error');
+    }
+  } catch {
+    showMsg('msg-perfil', 'Erro de conexão. Tente novamente.', 'error');
+  }
+}
+
+function confirmarExclusao() {
+  const confirmado = confirm(
+    'Tem certeza que deseja excluir sua conta?\n\nTodos os seus dados serão removidos permanentemente e esta ação não pode ser desfeita.'
+  );
+  if (confirmado) excluirConta();
+}
+
+async function excluirConta() {
+  try {
+    const res = await fetch(`${API}/users/${usuario.id_usuario}`, { method: 'DELETE' });
+    if (res.ok) {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    } else {
+      const err = await res.json();
+      showMsg('msg-excluir', err.detail || 'Erro ao excluir conta.', 'error');
+    }
+  } catch {
+    showMsg('msg-excluir', 'Erro de conexão. Tente novamente.', 'error');
   }
 }
 
